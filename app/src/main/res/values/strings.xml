@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">RMVTS</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="rmvts">RMVTS</string>
+    <string name="ignition_status">IGNITION STATUS</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
