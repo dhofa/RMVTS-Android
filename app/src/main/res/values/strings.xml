@@ -2,7 +2,7 @@
     <string name="app_name">RMVTS</string>
     <string name="title_activity_maps">Map</string>
     <string name="rmvts">RMVTS</string>
-    <string name="ignition_status">IGNITION STATUS</string>
+    <string name="ignition_status">IGNITION STATE</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -11,4 +11,30 @@
     <string name="sign_in">Login</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="menu_map">MAP</string>
+    <string name="menu_alarm_on">ALARM ON</string>
+    <string name="menu_alarm_off">ALARM OFF</string>
+    <string name="menu_ignition_on">IGNITION ON</string>
+    <string name="menu_ignition_off">IGNITION OFF</string>
+    <string name="menu_parking_on">PARKING ON</string>
+    <string name="menu_parking_off">PARKING OFF</string>
+    <string name="menu_gps_on">GPS ON</string>
+    <string name="menu_gps_off">GPS OFF</string>
+    <string name="header_owner">Owner</string>
+    <string name="header_plat_nomor">Plat Nomor</string>
+    <string name="menu_log">LOG</string>
+    <string name="menu_sign_out">SIGN OUT</string>
+    <string name="togle_alarm">togle_alarm</string>
+    <string name="togle_ignition">togle_ignition</string>
+    <string name="togle_bottom_sheet">togle_bottom_sheet</string>
+    <string name="vibration_on">Vibration : ON</string>
+    <string name="parkir_on">Mode Parkir ON</string>
+    <string name="vibration_off">Vibration : OFF</string>
+    <string name="parkir_off">Mode Parkir OFF</string>
+    <string name="ignition_on">ACTIVE</string>
+    <string name="ignition_off">Not ACTIVE</string>
+    <string name="gps_off">Gps : OFF</string>
+    <string name="gps_on">Gps : ON</string>
+    <string name="nama_jalan">nama jalan</string>
+    <string name="alamat_lengkap">Alamat Lengkap</string>
 </resources>

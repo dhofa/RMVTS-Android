@@ -45,6 +45,9 @@ dependencies {
     //circular progress button
     implementation 'br.com.simplepass:loading-button-android:1.14.0'
 
+    //org Apache for String utils validation
+    implementation 'org.apache.commons:commons-lang3:3.5'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

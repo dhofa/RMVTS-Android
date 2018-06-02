@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import java.util.HashMap;
 
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.LoginMenu.LoginActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.MainActivity;
 
 public class SessionManager {
@@ -14,15 +15,16 @@ public class SessionManager {
     private Context context;
     private int mode = 0;
 
-    private static final String IS_LOGIN = "IsLoggedIn";
-    private static final String pref_name = "MyPref"; //just name of our preference
-    private static final String token = "MyToken";
-    private static final String owner = "Owner";
-    private static final String email = "Email";
-    private static final String fcm_token = "FcmToken";
-    private static final String plate_number = "PlateNumber";
-    private static final String address = "Address";
-    private static final String vehicle_type = "VehicleType";
+    public static final String IS_LOGIN = "IsLoggedIn";
+    public static final String pref_name = "MyPref"; //just name of our preference
+    public static final String token = "MyToken";
+    public static final String owner = "Owner";
+    public static final String email = "Email";
+    public static final String fcm_token = "FcmToken";
+    public static final String plate_number = "PlateNumber";
+    public static final String address = "Address";
+    public static final String vehicle_type = "VehicleType";
+    public static final String id_user = "IdUser";
 
     public SessionManager(Context context) {
         this.context = context;
@@ -37,22 +39,23 @@ public class SessionManager {
         editor.commit();
     }
 
-    public void saveUserData(String Owner,String Email,String FCM, String Plat, String Address, String Type){
+    public void saveUserData(String Owner,String Email,String FCM, String Plat, String Address, String Type, String IdUser){
         editor.putString(owner, Owner);
         editor.putString(email, Email);
         editor.putString(fcm_token, FCM);
         editor.putString(plate_number, Plat);
         editor.putString(address, Address);
         editor.putString(vehicle_type, Type);
+        editor.putString(id_user, IdUser);
         editor.commit();
     }
 
     public void checkLogin(){
         if (!this.is_login()){
-//            Intent i = new Intent(context, LoginActivity.class);
-//            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            context.startActivity(i);
+            Intent i = new Intent(context, LoginActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(i);
         }else {
             Intent i = new Intent(context, MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -73,13 +76,14 @@ public class SessionManager {
         editor.remove(plate_number);
         editor.remove(address);
         editor.remove(vehicle_type);
+        editor.remove(id_user);
         editor.clear();
         editor.commit();
         editor.apply();
-//        Intent i = new Intent(context, LoginActivity.class);
-//        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        context.startActivity(i);
+        Intent i = new Intent(context, LoginActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
     }
 
     public HashMap<String, String> getUserDetails(){
@@ -89,6 +93,10 @@ public class SessionManager {
         user.put(owner, pref.getString(owner, null));
         user.put(email, pref.getString(email, null));
         user.put(fcm_token, pref.getString(fcm_token, null));
+        user.put(plate_number, pref.getString(plate_number, null));
+        user.put(address, pref.getString(address, null));
+        user.put(vehicle_type, pref.getString(vehicle_type, null));
+        user.put(id_user, pref.getString(id_user, null));
         return user;
     }
 }

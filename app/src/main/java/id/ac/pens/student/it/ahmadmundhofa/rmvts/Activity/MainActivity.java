@@ -3,84 +3,271 @@ package id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+import com.google.android.gms.maps.model.LatLng;
+
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiModels;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiService;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.LoginMenu.LoginActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.MapsMenu.MapsActivity;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.DataResponse;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.ResponseModel;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
-
-    @BindView(R.id.btn_bottom_sheet)
-    ImageView btnBottomSheet;
-
-    @BindView(R.id.bottom_sheet)
-    LinearLayout layoutBottomSheet;
-
-    @BindView(R.id.btn_maps)
-    LinearLayout goToMaps;
-
-    @BindView(R.id.btn_alarm)
-    RelativeLayout btnAlarm;
-
-    @BindView(R.id.btn_ignition)
-    RelativeLayout btnIgnition;
-
-    @BindView(R.id.text_gps)
-    TextView textGps;
-
-    @BindView(R.id.text_vibration)
-    TextView textVibration;
-
-    @BindView(R.id.mode)
-    TextView textMode;
-
-    @BindView(R.id.text_alarm)
-    TextView textAlarm;
-
-    @BindView(R.id.ignition_status)
-    TextView ignitionStatus;
-
-    @BindView(R.id.img_alarm)
-    ImageView imgAlarm;
-
-    @BindView(R.id.img_ignition)
-    ImageView imgIgnition;
-
-    @BindView(R.id.root_layout)
-    CoordinatorLayout rootLayout;
-
-    BottomSheetBehavior sheetBehavior;
-
     //Settup for transition
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
+    private static final String TAG = MainActivity.class.getSimpleName();
+    @BindView(R.id.btn_bottom_sheet)
+    ImageView btnBottomSheet;
+    @BindView(R.id.bottom_sheet)
+    LinearLayout layoutBottomSheet;
+    @BindView(R.id.btn_maps)
+    LinearLayout goToMaps;
+    @BindView(R.id.btn_ignition)
+    ToggleButton btnIgnition;
+    @BindView(R.id.btn_parking_mode)
+    ToggleButton btnParkingMode;
+    @BindView(R.id.btn_gps)
+    ToggleButton btnGps;
+    @BindView(R.id.text_gps)
+    TextView textGps;
+    @BindView(R.id.text_vibration)
+    TextView textVibration;
+    @BindView(R.id.mode)
+    TextView textMode;
+    @BindView(R.id.btn_alarm)
+    ToggleButton btnAlarm;
+    @BindView(R.id.ignition_status)
+    TextView ignitionStatus;
+    @BindView(R.id.header_owner)
+    TextView headerOwner;
+    @BindView(R.id.header_plat)
+    TextView headerPlat;
+    @BindView(R.id.title_alamat)
+    TextView titleAlamat;
+    @BindView(R.id.detail_alamat)
+    TextView detailAlamat;
+    @BindView(R.id.root_layout)
+    CoordinatorLayout rootLayout;
+    @BindView(R.id.logout)
+    LinearLayout logout;
+
+    private BottomSheetBehavior sheetBehavior;
+    private String URL_HOST = "https://rmvts.herokuapp.com/";
+    private Socket mSocket;
     private int revealX;
     private int revealY;
+    private String token;
+    private SessionManager sessionManager;
+    private HashMap<String, String> dataSession;
+
+    private Emitter.Listener buzzerEmitter = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String msg;
+                    try {
+                        msg = data.getString("msg");
+                    } catch (JSONException e) {
+                        return;
+                    }
+                    Log.e("status buzzer =>", msg);
+                    if (msg.equals("true")) {
+                        resultAlarmTrue();
+                    } else {
+                        resultAlarmFalse();
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener vibrationEmitter = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String msg;
+                    try {
+                        msg = data.getString("msg");
+                    } catch (JSONException e) {
+                        return;
+                    }
+                    Log.e("status vibration =>", msg);
+                    if (msg.equals("true")) {
+                        resultParkingEventTrue();
+                    } else {
+                        resultParkingEventFalse();
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener ignitionEmitter = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String msg;
+                    try {
+                        msg = data.getString("msg");
+                    } catch (JSONException e) {
+                        return;
+                    }
+                    Log.e("status ignition =>", msg);
+                    if (msg.equals("true")) {
+                        resultIgnitionTrue();
+                    } else {
+                        resultIgnitionFalse();
+                    }
+                }
+            });
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        settupDashboardData();
         settupTransition(savedInstanceState);
         settupBottomSheet();
+        settupSocket();
+    }
+
+    private void settupDashboardData() {
+        sessionManager = new SessionManager(getApplicationContext());
+        dataSession = sessionManager.getUserDetails();
+        token = dataSession.get(SessionManager.token);
+
+        ApiModels apiService = ApiService.getHttp().create(ApiModels.class);
+        Call<ResponseModel> call = apiService.getDashboard(token);
+        call.enqueue(new Callback<ResponseModel>() {
+            @Override
+            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                DataResponse dataResponse = response.body().getData();
+                settupDataRelay(dataResponse);
+                LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
+                locationVehicle(lokasi);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void locationVehicle(LatLng lokasi) {
+        String[] locationPinned = getLocationNameAndAddress(lokasi);
+        titleAlamat.setText(locationPinned[0]);
+        detailAlamat.setText(locationPinned[1]);
+        headerOwner.setText(dataSession.get(SessionManager.owner));
+        headerPlat.setText(dataSession.get(SessionManager.plate_number));
+    }
+
+    private void settupDataRelay(DataResponse dataResponse) {
+        Boolean relay_gps = dataResponse.getRelay().getGps();
+        Boolean relay_ignition = dataResponse.getRelay().getIgnition();
+        Boolean relay_vibration = dataResponse.getRelay().getVibration();
+        Boolean relay_buzzer = dataResponse.getRelay().getBuzzer();
+
+        btnGps.setChecked(relay_gps);
+        btnIgnition.setChecked(relay_ignition);
+        btnParkingMode.setChecked(relay_vibration);
+        btnAlarm.setChecked(relay_buzzer);
+
+        if(relay_buzzer){
+            resultAlarmTrue();
+        }else{
+            resultAlarmFalse();
+        }
+
+        if(relay_ignition){
+            resultIgnitionTrue();
+        }else{
+            resultIgnitionFalse();
+        }
+
+        if(relay_vibration){
+            resultParkingEventTrue();
+        }else{
+            resultParkingEventFalse();
+        }
+
+        if(relay_gps){
+            resultGpsTrue();
+        }else{
+            resultGpsFalse();
+        }
+    }
+
+    private void settupSocket() {
+        try {
+//            Jika menggunakan Room
+//            IO.Options opts = new IO.Options();
+//            opts.forceNew = true;
+//            opts.query = "id_user=" + ID_USER;
+//            mSocket = IO.socket(URL_HOST, opts);
+            mSocket = IO.socket(URL_HOST);
+        } catch (URISyntaxException e) {
+            Log.v("Error karena => ", e.toString());
+        }
+
+        mSocket.on("relay1", buzzerEmitter);
+        mSocket.on("relay2", vibrationEmitter);
+        mSocket.on("relay3", ignitionEmitter);
+        mSocket.connect();
     }
 
     private void settupTransition(Bundle savedInstanceState) {
@@ -115,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
 
             // create the animator for this view (the start radius is zero)
             Animator circularReveal = ViewAnimationUtils.createCircularReveal(rootLayout, x, y, 0, finalRadius);
-            circularReveal.setDuration(400);
+            circularReveal.setDuration(500);
             circularReveal.setInterpolator(new AccelerateInterpolator());
 
             // make the view visible and start the animation
@@ -179,6 +366,48 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public String[] getLocationNameAndAddress(LatLng posisiLatLong) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        String[] locationPinned = {"Lokasi Terpilih", "Alamat Terpilih"};
+        runOnUiThread(() -> {
+            try {
+                int MAX_RESULTS = 1;
+                List<Address> addresses = geocoder.getFromLocation(posisiLatLong.latitude, posisiLatLong.longitude, MAX_RESULTS);
+                for (int i = 0; i < MAX_RESULTS; i++){
+                    Log.v("List Alamat => ","ke-"+String.valueOf(i));
+                    if (addresses.get(i) != null && addresses.size() > 0) {
+                        String address = addresses.get(i).getThoroughfare();
+                        String city = addresses.get(i).getLocality();
+                        String province = addresses.get(i).getAdminArea();
+                        String country = addresses.get(i).getCountryName();
+                        String name = addresses.get(i).getThoroughfare();
+                        String completeAddress = "";
+                        if (StringUtils.isNotBlank(address)) {
+                            completeAddress += address + " ";
+                        }
+                        if (StringUtils.isNotBlank(city)) {
+                            completeAddress += city + ", ";
+                        }
+                        if (StringUtils.isNotBlank(province)) {
+                            completeAddress += province + " - ";
+                        }
+                        if (StringUtils.isNotBlank(country)) {
+                            completeAddress += country;
+                        }
+                        if (StringUtils.isNotBlank(name)) {
+                            locationPinned[0] = name;
+                        }
+                        locationPinned[1] = completeAddress;
+                        i = MAX_RESULTS;
+                    }
+                }
+            } catch (IOException e) {
+                Log.e("GEO_", "Unable connect to Geocoder -> " + e.getLocalizedMessage());
+            }
+        });
+        return locationPinned;
+    }
+
     @OnClick(R.id.btn_bottom_sheet)
     public void toggleBottomSheet() {
         if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
@@ -196,29 +425,135 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @OnClick(R.id.btn_gps)
-    public void setUpGps() {
-        textGps.setText("Gps : OFF");
+    @OnCheckedChanged(R.id.btn_gps)
+    public void setUpGps(CompoundButton button, boolean checked) {
+        JSONObject content = new JSONObject();
+        if (checked) {
+            try {
+                content.put("msg", true);
+            } catch (JSONException e) {
+                return;
+            }
+            resultGpsTrue();
+        } else {
+            try {
+                content.put("msg", false);
+            } catch (JSONException e) {
+                return;
+            }
+            resultGpsFalse();
+        }
+        mSocket.emit("statusgps", content);
     }
 
-    @OnClick(R.id.btn_parking_mode)
-    public void setUpParking() {
-        textVibration.setText("Vibration : OFF");
-        textMode.setText("Mode Parkir OFF");
+    private void resultGpsFalse() {
+        btnGps.setBackground(getResources().getDrawable(R.drawable.togle_off_left_top));
+        textGps.setText(R.string.gps_off);
     }
 
-    @OnClick(R.id.btn_alarm)
-    public void setUpAlarm() {
-        textAlarm.setText("Alarm : OFF");
-        imgAlarm.setImageResource(R.drawable.alarm_on);
+    private void resultGpsTrue() {
+        btnGps.setBackground(getResources().getDrawable(R.drawable.togle_on_left_top));
+        textGps.setText(R.string.gps_on);
     }
 
-    @OnClick(R.id.btn_ignition)
-    public void setUpIgnition() {
-        ignitionStatus.setText("IN ACTIVE");
-        imgIgnition.setImageResource(R.drawable.ignition_on);
+    @OnCheckedChanged(R.id.btn_parking_mode)
+    public void setUpParking(CompoundButton button, boolean checked) {
+        JSONObject content = new JSONObject();
+        if (checked) {
+            try {
+                content.put("msg", true);
+            } catch (JSONException e) {
+                return;
+            }
+            resultParkingEventTrue();
+        } else {
+            try {
+                content.put("msg", false);
+            } catch (JSONException e) {
+                return;
+            }
+            resultParkingEventFalse();
+        }
+        mSocket.emit("relay2", content);
     }
 
+    private void resultParkingEventFalse() {
+        btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_off_right_top));
+        textVibration.setText(R.string.vibration_off);
+        textMode.setText(R.string.parkir_off);
+    }
 
+    private void resultParkingEventTrue() {
+        btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_on_right_top));
+        textVibration.setText(R.string.vibration_on);
+        textMode.setText(R.string.parkir_on);
+    }
 
+    @OnCheckedChanged(R.id.btn_alarm)
+    public void setUpAlarm(CompoundButton button, boolean checked) {
+        JSONObject content = new JSONObject();
+        if (checked) {
+            try {
+                content.put("msg", true);
+            } catch (JSONException e) {
+                return;
+            }
+            resultAlarmTrue();
+        } else {
+            try {
+                content.put("msg", false);
+            } catch (JSONException e) {
+                return;
+            }
+            resultAlarmFalse();
+        }
+        mSocket.emit("relay1", content);
+    }
+
+    private void resultAlarmFalse() {
+        btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_off_right_bottom));
+    }
+
+    private void resultAlarmTrue() {
+        btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_on_right_bottom));
+    }
+
+    @OnCheckedChanged(R.id.btn_ignition)
+    public void setUpIgnition(CompoundButton button, boolean checked) {
+        JSONObject content = new JSONObject();
+        if (checked) {
+            try {
+                content.put("msg", true);
+            } catch (JSONException e) {
+                return;
+            }
+            resultIgnitionTrue();
+        } else {
+            try {
+                content.put("msg", false);
+            } catch (JSONException e) {
+                return;
+            }
+            resultIgnitionFalse();
+        }
+        mSocket.emit("relay3", content);
+    }
+
+    private void resultIgnitionFalse() {
+        btnIgnition.setBackground(getResources().getDrawable(R.drawable.togle_off_left_bottom));
+        ignitionStatus.setText(R.string.ignition_off);
+    }
+
+    private void resultIgnitionTrue() {
+        btnIgnition.setBackground(getResources().getDrawable(R.drawable.togle_on_left_bottom));
+        ignitionStatus.setText(R.string.ignition_on);
+    }
+
+    @OnClick(R.id.logout)
+    public void goLogout(){
+        sessionManager.logout();
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

@@ -53,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private String TAG = LoginActivity.class.getSimpleName();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         sessionManager = new SessionManager(this);
+
         submit = (CircularProgressButton) findViewById(R.id.submit);
         submit.setOnClickListener(v -> submitClicked(v));
     }
@@ -120,8 +120,9 @@ public class LoginActivity extends AppCompatActivity {
         String address= data.getVehicleData().getAddress();
         String type   = data.getVehicleData().getVehicleType();
         String token  = data.getToken();
+        String id_user= data.getIdRaspberry();
 
-        sessionManager.saveUserData(owner,str_email, fcm_token, plat, address, type);
+        sessionManager.saveUserData(owner,str_email, fcm_token, plat, address, type, id_user);
         sessionManager.createSession(token);
     }
 
