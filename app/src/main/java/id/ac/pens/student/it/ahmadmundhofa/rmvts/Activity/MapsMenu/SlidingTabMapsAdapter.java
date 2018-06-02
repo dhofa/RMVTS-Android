@@ -1,4 +1,4 @@
-package id.ac.pens.student.it.ahmadmundhofa.rmvts;
+package id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.MapsMenu;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

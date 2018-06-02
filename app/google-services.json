@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "791923840926",
+    "firebase_url": "https://rmvts-2018.firebaseio.com",
+    "project_id": "rmvts-2018",
+    "storage_bucket": "rmvts-2018.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791923840926:android:4b79a3df0fced638",
+        "android_client_info": {
+          "package_name": "id.ac.pens.student.it.ahmadmundhofa.rmvts"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "791923840926-6jmsj68tane6i7tu4tilcqsnf6romjbg.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "791923840926-6jmsj68tane6i7tu4tilcqsnf6romjbg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ0E_a2TQKGlPPdczDT7nkNpjOgaKcPW4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

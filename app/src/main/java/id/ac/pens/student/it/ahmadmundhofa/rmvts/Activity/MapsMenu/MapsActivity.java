@@ -1,4 +1,4 @@
-package id.ac.pens.student.it.ahmadmundhofa.rmvts;
+package id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.MapsMenu;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 
 public class MapsActivity extends AppCompatActivity {
     private SlidingTabMapsAdapter adapter;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#906200EE</color>
 
     <!--Indigo Color-->
     <color name="indigo_100">#C5CAE9</color>
@@ -14,5 +14,8 @@
     <color name="A200">#536DFE</color>
     <color name="A400">#3D5AFE</color>
     <color name="A700">#304FFE</color>
+
+    <color name="button_login">#6200EE</color>
+    <color name="login_background">#F1E7EE</color>
 
 </resources>

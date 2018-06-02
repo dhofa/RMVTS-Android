@@ -6,4 +6,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="belum_memiliki_akun_klik">Don\'t have account? </string>
+    <string name="disini">create account</string>
+    <string name="sign_in">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>

@@ -1,4 +1,4 @@
-package id.ac.pens.student.it.ahmadmundhofa.rmvts;
+package id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.MapsMenu;
 
 
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 
 
 /**
