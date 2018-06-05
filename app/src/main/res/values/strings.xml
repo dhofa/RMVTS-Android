@@ -27,14 +27,28 @@
     <string name="togle_alarm">togle_alarm</string>
     <string name="togle_ignition">togle_ignition</string>
     <string name="togle_bottom_sheet">togle_bottom_sheet</string>
-    <string name="vibration_on">Vibration : ON</string>
     <string name="parkir_on">Mode Parkir ON</string>
-    <string name="vibration_off">Vibration : OFF</string>
     <string name="parkir_off">Mode Parkir OFF</string>
     <string name="ignition_on">ACTIVE</string>
     <string name="ignition_off">Not ACTIVE</string>
-    <string name="gps_off">Gps : OFF</string>
-    <string name="gps_on">Gps : ON</string>
-    <string name="nama_jalan">nama jalan</string>
-    <string name="alamat_lengkap">Alamat Lengkap</string>
+    <string name="gps_off">Log Gps : OFF</string>
+    <string name="gps_on">Log Gps : ON</string>
+    <string name="nama_jalan">----</string>
+    <string name="alamat_lengkap">--------</string>
+    <string name="alarm_off">Alarm : OFF</string>
+    <string name="alarm_on">Alarm : ON</string>
+    <string name="mode_parkir">Mode Parkir --</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="bottom_dashboard">Dashboard</string>
+    <string name="bottom_maps">Realtime Maps</string>
+    <string name="bottom_your_location">Log Vehicle</string>
+    <string name="bottom_capture">Snap Capture</string>
+    <string name="bottom_log">Log Activity</string>
+
 </resources>

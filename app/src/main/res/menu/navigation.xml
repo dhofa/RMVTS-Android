@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/dashboard"
+        android:icon="@drawable/icon_1"
+        android:title="@string/bottom_dashboard" />
+
+    <item
+        android:id="@+id/realtime_maps"
+        android:icon="@drawable/icon_2"
+        android:title="@string/bottom_maps" />
+
+    <item
+        android:id="@+id/capture_image"
+        android:icon="@drawable/icon_3"
+        android:title="@string/bottom_capture" />
+
+    <item
+        android:id="@+id/log_vehicle"
+        android:icon="@drawable/icon_4"
+        android:title="@string/bottom_your_location" />
+
+    <item
+        android:id="@+id/log_activity"
+        android:icon="@drawable/icon_5"
+        android:title="@string/bottom_log" />
+
+</menu>

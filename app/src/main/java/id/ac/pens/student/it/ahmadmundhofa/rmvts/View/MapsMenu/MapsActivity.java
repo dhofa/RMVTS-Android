@@ -1,4 +1,4 @@
-package id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.MapsMenu;
+package id.ac.pens.student.it.ahmadmundhofa.rmvts.View.MapsMenu;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;

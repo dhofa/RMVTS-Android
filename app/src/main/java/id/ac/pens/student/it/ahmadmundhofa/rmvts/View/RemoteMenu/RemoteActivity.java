@@ -1,16 +1,20 @@
-package id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity;
+package id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RemoteMenu;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -18,14 +22,21 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextClock;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.maps.model.LatLng;
+import com.hookedonplay.decoviewlib.DecoView;
+import com.hookedonplay.decoviewlib.charts.SeriesItem;
+import com.hookedonplay.decoviewlib.events.DecoEvent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
@@ -43,64 +54,212 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiModels;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiService;
-import id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.LoginMenu.LoginActivity;
-import id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.MapsMenu.MapsActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.DataResponse;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.ResponseModel;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.MainActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
-    //Settup for transition
+public class RemoteActivity extends AppCompatActivity {
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
-    private static final String TAG = MainActivity.class.getSimpleName();
-    @BindView(R.id.btn_bottom_sheet)
-    ImageView btnBottomSheet;
-    @BindView(R.id.bottom_sheet)
-    LinearLayout layoutBottomSheet;
-    @BindView(R.id.btn_maps)
-    LinearLayout goToMaps;
+    private String URL_HOST = "https://rmvts.herokuapp.com/";
+    private Socket mSocket;
+    private int revealX;
+    private int revealY;
+
     @BindView(R.id.btn_ignition)
     ToggleButton btnIgnition;
     @BindView(R.id.btn_parking_mode)
     ToggleButton btnParkingMode;
     @BindView(R.id.btn_gps)
     ToggleButton btnGps;
-    @BindView(R.id.text_gps)
-    TextView textGps;
-    @BindView(R.id.text_vibration)
-    TextView textVibration;
-    @BindView(R.id.mode)
-    TextView textMode;
     @BindView(R.id.btn_alarm)
     ToggleButton btnAlarm;
-    @BindView(R.id.ignition_status)
-    TextView ignitionStatus;
-    @BindView(R.id.header_owner)
-    TextView headerOwner;
-    @BindView(R.id.header_plat)
-    TextView headerPlat;
+//    @BindView(R.id.header_owner)
+//    TextView headerOwner;
+//    @BindView(R.id.header_plat)
+//    TextView headerPlat;
+    @BindView(R.id.text_gps)
+    TextView textGps;
+    @BindView(R.id.text_alarm)
+    TextView textAlarm;
+    @BindView(R.id.mode)
+    TextView textMode;
     @BindView(R.id.title_alamat)
     TextView titleAlamat;
     @BindView(R.id.detail_alamat)
     TextView detailAlamat;
+    @BindView(R.id.dynamicArcView)
+    DecoView decoView;
+    @BindView(R.id.textClock)
+    TextClock textclock;
+    @BindView(R.id.main_content)
+    ScrollView mainContent;
+    @BindView(R.id.progressbar)
+    ProgressBar progressbar;
     @BindView(R.id.root_layout)
-    CoordinatorLayout rootLayout;
-    @BindView(R.id.logout)
-    LinearLayout logout;
-
-    private BottomSheetBehavior sheetBehavior;
-    private String URL_HOST = "https://rmvts.herokuapp.com/";
-    private Socket mSocket;
-    private int revealX;
-    private int revealY;
+    RelativeLayout rootLayout;
     private String token;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_remote);
+        ButterKnife.bind(this);
+        settupTransition(savedInstanceState);
+        settupDashboardData();
+        settupSocket();
+    }
+
+    private void settupDashboardData() {
+        mainContent.setVisibility(View.INVISIBLE);
+        progressbar.setVisibility(View.VISIBLE);
+        sessionManager = new SessionManager(getApplicationContext());
+        dataSession = sessionManager.getUserDetails();
+        token = dataSession.get(SessionManager.token);
+
+        ApiModels apiService = ApiService.getHttp().create(ApiModels.class);
+        Call<ResponseModel> call = apiService.getDashboard(token);
+        call.enqueue(new Callback<ResponseModel>() {
+            @Override
+            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                if(response.body().getStatus().equals("success")){
+                    DataResponse dataResponse = response.body().getData();
+                    if(dataResponse!=null){
+                        settupDataRelay(dataResponse);
+                        LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
+                        locationVehicle(lokasi);
+                    }
+                }else{
+                    Toast.makeText(RemoteActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Toast.makeText(RemoteActivity.this, "Fail to get data..", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        textclock.setFormat24Hour("kk:mm:ss");
+        textclock.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String data[] = charSequence.toString().split(":");
+                initializeCurrentChart(Integer.parseInt(data[2]), 59);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
+    private void initializeCurrentChart(int jam, int total_jam) {
+        String format = "%.0f";
+        final SeriesItem seriesJamKerja = new SeriesItem.Builder(Color.parseColor("#FB7254"))
+                .setRange(0, total_jam, jam)
+                .build();
+        int dataJamKerja = decoView.addSeries(seriesJamKerja);
+
+        seriesJamKerja.addArcSeriesItemListener(new SeriesItem.SeriesItemListener() {
+            @Override
+            public void onSeriesItemAnimationProgress(float percentComplete, float currentPosition) {
+//                float percentFilled = ((currentPosition - seriesJamKerja.getMinValue()) / (seriesJamKerja.getMaxValue() - seriesJamKerja.getMinValue()));
+//                textPercentage.setText(String.format(Locale.ENGLISH, format, percentFilled * 100f));
+                if (currentPosition == total_jam) {
+//                    tv_jam_kerja.setText(String.format(Locale.ENGLISH, format, currentPosition));
+                    seriesJamKerja.setColor(Color.parseColor("#EAE6E5"));
+                }
+            }
+
+            @Override
+            public void onSeriesItemDisplayProgress(float percentComplete) {
+
+            }
+        });
+
+        //bagian menggambar chart tingkat kehadiran
+        decoView.addEvent(new DecoEvent.Builder(jam)
+                .setIndex(dataJamKerja)
+                .setDelay(1000)
+                .build());
+    }
+
+    private void locationVehicle(LatLng lokasi) {
+        @Nullable
+        String[] locationPinned = getLocationNameAndAddress(lokasi);
+
+        assert locationPinned != null;
+        if(locationPinned[0] != null && locationPinned[1]!=null){
+            titleAlamat.setText(locationPinned[0]);
+            detailAlamat.setText(locationPinned[1]);
+        }
+
+//        headerOwner.setText(dataSession.get(SessionManager.owner));
+//        headerPlat.setText(dataSession.get(SessionManager.plate_number));
+        mainContent.setVisibility(View.VISIBLE);
+        progressbar.setVisibility(View.INVISIBLE);
+    }
+
+    @Nullable
+    public String[] getLocationNameAndAddress(LatLng posisiLatLong) {
+
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        String[] locationPinned = {"Location not found", "Detail location not found"};
+        runOnUiThread(() -> {
+            try {
+                int MAX_RESULTS = 1;
+                if(posisiLatLong!=null){
+                    List<Address> addresses = geocoder.getFromLocation(posisiLatLong.latitude, posisiLatLong.longitude, MAX_RESULTS);
+                    for (int i = 0; i < MAX_RESULTS; i++) {
+                        Log.v("List Alamat => ", "ke-" + String.valueOf(i));
+                        if (addresses.get(i) != null && addresses.size() > 0) {
+                            String address = addresses.get(i).getThoroughfare();
+                            String city = addresses.get(i).getLocality();
+                            String province = addresses.get(i).getAdminArea();
+                            String country = addresses.get(i).getCountryName();
+                            String name = addresses.get(i).getThoroughfare();
+                            String completeAddress = "";
+                            if (StringUtils.isNotBlank(address)) {
+                                completeAddress += address + " ";
+                            }
+                            if (StringUtils.isNotBlank(city)) {
+                                completeAddress += city + ", ";
+                            }
+                            if (StringUtils.isNotBlank(province)) {
+                                completeAddress += province + " - ";
+                            }
+                            if (StringUtils.isNotBlank(country)) {
+                                completeAddress += country;
+                            }
+                            if (StringUtils.isNotBlank(name)) {
+                                locationPinned[0] = name;
+                            }
+                            locationPinned[1] = completeAddress;
+                            i = MAX_RESULTS;
+                        }
+                    }
+                }
+
+            } catch (IOException e) {
+                Log.e("GEO_", "Unable connect to Geocoder -> " + e.getLocalizedMessage());
+            }
+        });
+        return locationPinned;
+    }
 
     private Emitter.Listener buzzerEmitter = new Emitter.Listener() {
         @Override
@@ -173,48 +332,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        settupDashboardData();
-        settupTransition(savedInstanceState);
-        settupBottomSheet();
-        settupSocket();
-    }
-
-    private void settupDashboardData() {
-        sessionManager = new SessionManager(getApplicationContext());
-        dataSession = sessionManager.getUserDetails();
-        token = dataSession.get(SessionManager.token);
-
-        ApiModels apiService = ApiService.getHttp().create(ApiModels.class);
-        Call<ResponseModel> call = apiService.getDashboard(token);
-        call.enqueue(new Callback<ResponseModel>() {
-            @Override
-            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                DataResponse dataResponse = response.body().getData();
-                settupDataRelay(dataResponse);
-                LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
-                locationVehicle(lokasi);
-            }
-
-            @Override
-            public void onFailure(Call<ResponseModel> call, Throwable t) {
-
-            }
-        });
-    }
-
-    private void locationVehicle(LatLng lokasi) {
-        String[] locationPinned = getLocationNameAndAddress(lokasi);
-        titleAlamat.setText(locationPinned[0]);
-        detailAlamat.setText(locationPinned[1]);
-        headerOwner.setText(dataSession.get(SessionManager.owner));
-        headerPlat.setText(dataSession.get(SessionManager.plate_number));
-    }
 
     private void settupDataRelay(DataResponse dataResponse) {
         Boolean relay_gps = dataResponse.getRelay().getGps();
@@ -335,95 +452,54 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void settupBottomSheet() {
-        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
 
-        sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                switch (newState) {
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        break;
-                    case BottomSheetBehavior.STATE_EXPANDED: {
-                        btnBottomSheet.setImageResource(R.drawable.box_changed);
-                    }
-                    break;
-                    case BottomSheetBehavior.STATE_COLLAPSED: {
-                        btnBottomSheet.setImageResource(R.drawable.box);
-                    }
-                    break;
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                        break;
-                    case BottomSheetBehavior.STATE_SETTLING:
-                        break;
-                }
-            }
+//    private void settupBottomSheet() {
+//        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
+//
+//        sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+//            @Override
+//            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+//                switch (newState) {
+//                    case BottomSheetBehavior.STATE_HIDDEN:
+//                        break;
+//                    case BottomSheetBehavior.STATE_EXPANDED: {
+//                        btnBottomSheet.setImageResource(R.drawable.box_changed);
+//                    }
+//                    break;
+//                    case BottomSheetBehavior.STATE_COLLAPSED: {
+//                        btnBottomSheet.setImageResource(R.drawable.box);
+//                    }
+//                    break;
+//                    case BottomSheetBehavior.STATE_DRAGGING:
+//                        break;
+//                    case BottomSheetBehavior.STATE_SETTLING:
+//                        break;
+//                }
+//            }
+//
+//            @Override
+//            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+//
+//            }
+//        });
+//    }
 
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
-    }
-
-    public String[] getLocationNameAndAddress(LatLng posisiLatLong) {
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        String[] locationPinned = {"Lokasi Terpilih", "Alamat Terpilih"};
-        runOnUiThread(() -> {
-            try {
-                int MAX_RESULTS = 1;
-                List<Address> addresses = geocoder.getFromLocation(posisiLatLong.latitude, posisiLatLong.longitude, MAX_RESULTS);
-                for (int i = 0; i < MAX_RESULTS; i++){
-                    Log.v("List Alamat => ","ke-"+String.valueOf(i));
-                    if (addresses.get(i) != null && addresses.size() > 0) {
-                        String address = addresses.get(i).getThoroughfare();
-                        String city = addresses.get(i).getLocality();
-                        String province = addresses.get(i).getAdminArea();
-                        String country = addresses.get(i).getCountryName();
-                        String name = addresses.get(i).getThoroughfare();
-                        String completeAddress = "";
-                        if (StringUtils.isNotBlank(address)) {
-                            completeAddress += address + " ";
-                        }
-                        if (StringUtils.isNotBlank(city)) {
-                            completeAddress += city + ", ";
-                        }
-                        if (StringUtils.isNotBlank(province)) {
-                            completeAddress += province + " - ";
-                        }
-                        if (StringUtils.isNotBlank(country)) {
-                            completeAddress += country;
-                        }
-                        if (StringUtils.isNotBlank(name)) {
-                            locationPinned[0] = name;
-                        }
-                        locationPinned[1] = completeAddress;
-                        i = MAX_RESULTS;
-                    }
-                }
-            } catch (IOException e) {
-                Log.e("GEO_", "Unable connect to Geocoder -> " + e.getLocalizedMessage());
-            }
-        });
-        return locationPinned;
-    }
-
-    @OnClick(R.id.btn_bottom_sheet)
-    public void toggleBottomSheet() {
-        if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            btnBottomSheet.setImageResource(R.drawable.box_changed);
-        } else {
-            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            btnBottomSheet.setImageResource(R.drawable.box);
-        }
-    }
-
-    @OnClick(R.id.btn_maps)
-    public void goToMaps() {
-        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-        startActivity(intent);
-    }
+//    @OnClick(R.id.btn_bottom_sheet)
+//    public void toggleBottomSheet() {
+//        if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+//            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//            btnBottomSheet.setImageResource(R.drawable.box_changed);
+//        } else {
+//            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//            btnBottomSheet.setImageResource(R.drawable.box);
+//        }
+//    }
+//
+//    @OnClick(R.id.btn_maps)
+//    public void goToMaps() {
+//        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+//        startActivity(intent);
+//    }
 
     @OnCheckedChanged(R.id.btn_gps)
     public void setUpGps(CompoundButton button, boolean checked) {
@@ -479,13 +555,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void resultParkingEventFalse() {
         btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_off_right_top));
-        textVibration.setText(R.string.vibration_off);
         textMode.setText(R.string.parkir_off);
     }
 
     private void resultParkingEventTrue() {
         btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_on_right_top));
-        textVibration.setText(R.string.vibration_on);
         textMode.setText(R.string.parkir_on);
     }
 
@@ -512,10 +586,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void resultAlarmFalse() {
         btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_off_right_bottom));
+        textAlarm.setText(R.string.alarm_off);
     }
 
     private void resultAlarmTrue() {
         btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_on_right_bottom));
+        textAlarm.setText(R.string.alarm_on);
     }
 
     @OnCheckedChanged(R.id.btn_ignition)
@@ -541,19 +617,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void resultIgnitionFalse() {
         btnIgnition.setBackground(getResources().getDrawable(R.drawable.togle_off_left_bottom));
-        ignitionStatus.setText(R.string.ignition_off);
+//        ignitionStatus.setText(R.string.ignition_off);
     }
 
     private void resultIgnitionTrue() {
         btnIgnition.setBackground(getResources().getDrawable(R.drawable.togle_on_left_bottom));
-        ignitionStatus.setText(R.string.ignition_on);
+//        ignitionStatus.setText(R.string.ignition_on);
     }
 
-    @OnClick(R.id.logout)
-    public void goLogout(){
-        sessionManager.logout();
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, progressbar, "transition");
+        int revealX = (int) (progressbar.getX() + progressbar.getWidth() / 2);
+        int revealY = (int) (progressbar.getY() + progressbar.getHeight() / 2);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_CIRCULAR_REVEAL_X, revealX);
+        intent.putExtra(MainActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY);
+
+        ActivityCompat.startActivity(this, intent, options.toBundle());
     }
 }

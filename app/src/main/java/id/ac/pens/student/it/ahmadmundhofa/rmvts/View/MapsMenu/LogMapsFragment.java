@@ -1,4 +1,4 @@
-package id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.MapsMenu;
+package id.ac.pens.student.it.ahmadmundhofa.rmvts.View.MapsMenu;
 
 
 import android.os.Bundle;
@@ -13,10 +13,10 @@ import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RealtimeMapsFragment extends Fragment {
+public class LogMapsFragment extends Fragment {
 
 
-    public RealtimeMapsFragment() {
+    public LogMapsFragment() {
         // Required empty public constructor
     }
 
@@ -25,7 +25,7 @@ public class RealtimeMapsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_realtime_maps, container, false);
+        return inflater.inflate(R.layout.fragment_log_maps, container, false);
     }
 
 }

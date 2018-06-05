@@ -6,8 +6,8 @@ import android.content.SharedPreferences;
 
 import java.util.HashMap;
 
-import id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.LoginMenu.LoginActivity;
-import id.ac.pens.student.it.ahmadmundhofa.rmvts.Activity.MainActivity;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LoginMenu.LoginActivity;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.MainActivity;
 
 public class SessionManager {
     private SharedPreferences pref;
@@ -64,7 +64,7 @@ public class SessionManager {
         }
     }
 
-    private boolean is_login() {
+    public boolean is_login() {
         return pref.getBoolean(IS_LOGIN, false);
     }
 
