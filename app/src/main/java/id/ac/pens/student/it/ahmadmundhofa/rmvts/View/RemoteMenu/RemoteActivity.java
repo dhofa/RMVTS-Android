@@ -177,10 +177,7 @@ public class RemoteActivity extends AppCompatActivity {
         seriesJamKerja.addArcSeriesItemListener(new SeriesItem.SeriesItemListener() {
             @Override
             public void onSeriesItemAnimationProgress(float percentComplete, float currentPosition) {
-//                float percentFilled = ((currentPosition - seriesJamKerja.getMinValue()) / (seriesJamKerja.getMaxValue() - seriesJamKerja.getMinValue()));
-//                textPercentage.setText(String.format(Locale.ENGLISH, format, percentFilled * 100f));
                 if (currentPosition == total_jam) {
-//                    tv_jam_kerja.setText(String.format(Locale.ENGLISH, format, currentPosition));
                     seriesJamKerja.setColor(Color.parseColor("#EAE6E5"));
                 }
             }
@@ -207,9 +204,6 @@ public class RemoteActivity extends AppCompatActivity {
             titleAlamat.setText(locationPinned[0]);
             detailAlamat.setText(locationPinned[1]);
         }
-
-//        headerOwner.setText(dataSession.get(SessionManager.owner));
-//        headerPlat.setText(dataSession.get(SessionManager.plate_number));
         mainContent.setVisibility(View.VISIBLE);
         progressbar.setVisibility(View.INVISIBLE);
     }

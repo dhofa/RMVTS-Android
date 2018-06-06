@@ -121,7 +121,7 @@ public class DashboardFragment extends Fragment {
     }
 
     private void settupDashboardData() {
-        mainContent.setVisibility(View.INVISIBLE);
+        mainContent.setAlpha(0.0f);
         progressbar.setVisibility(View.VISIBLE);
 
         sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
@@ -231,7 +231,7 @@ public class DashboardFragment extends Fragment {
             titleAlamat.setText(locationPinned[0]);
             detailAlamat.setText(locationPinned[1]);
         }
-        mainContent.setVisibility(View.VISIBLE);
+        mainContent.animate().alpha(1.0f).setDuration(1000);
         progressbar.setVisibility(View.INVISIBLE);
     }
 

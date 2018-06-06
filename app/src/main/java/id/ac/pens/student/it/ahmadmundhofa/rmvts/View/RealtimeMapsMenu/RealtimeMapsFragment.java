@@ -142,7 +142,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
         //TODO: remove marker vehicle dan perbaharui
         if(lokasi_kendaraan != null){
             marker_vehicle.remove();
-            marker_vehicle = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_my_location)).position(lokasi_kendaraan).title("Your Vehicle"));
+            marker_vehicle = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vehicle_location)).position(lokasi_kendaraan).title("Your Vehicle"));
         }
     }
 
@@ -227,7 +227,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
                     if (dataResponse != null) {
                         LatLng vehicle_last_location = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
                         sessionManager.updateLocation(String.valueOf(vehicle_last_location.latitude), String.valueOf(vehicle_last_location.longitude));
-                        marker_vehicle = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_my_location)).position(vehicle_last_location).title("Your Vehicle"));
+                        marker_vehicle = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vehicle_location)).position(vehicle_last_location).title("Your Vehicle"));
 
                         LatLngBounds.Builder builder = new LatLngBounds.Builder();
                         builder.include(marker_android.getPosition());
