@@ -9,14 +9,20 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.nkzawa.socketio.client.Socket;
@@ -28,8 +34,10 @@ import butterknife.ButterKnife;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.Dashboard.DashboardFragment;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LoginMenu.LoginActivity;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RealtimeMapsMenu.RealtimeMapsFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
 //    @BindView(R.id.logout)
@@ -44,25 +52,104 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
 
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawer;
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
+    TextView headerOwner, headerEmail;
+    ImageView fotoProfile;
+
     private BottomSheetBehavior sheetBehavior;
-    //Settup for transition
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
     private String URL_HOST = "https://rmvts.herokuapp.com/";
     private Socket mSocket;
     private int revealX;
     private int revealY;
-
+    ActionBarDrawerToggle toggle;
+    private SessionManager sessionManager;
+    private HashMap<String, String> dataSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        sessionManager = new SessionManager(this);
+        dataSession = sessionManager.getUserDetails();
+
         settupTransition(savedInstanceState);
+        settupSideNavigation();
+        settupBottomNavigation();
         Fragment fragment = new DashboardFragment();
         loadFragment(fragment);
-        settupBottomNavigation();
+    }
+
+    private void settupSideNavigation() {
+        toggle = new ActionBarDrawerToggle(this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                showHeader();
+            }
+        };
+        mDrawer.addDrawerListener(toggle);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        //initialize data in navigation drawer, its diferent with activity or fragment
+        View headerView = navigationView.getHeaderView(0);
+        fotoProfile = (ImageView) headerView.findViewById(R.id.foto_profile);
+        headerOwner = (TextView) headerView.findViewById(R.id.header_owner);
+        headerEmail = (TextView) headerView.findViewById(R.id.header_email);
+
+        toggle.syncState();
+    }
+
+    private void showHeader() {
+        String nama  = dataSession.get(SessionManager.owner);
+        String email = dataSession.get(SessionManager.email);
+//        String imgageUrl = presenter.getDataSession().getFotoUrl();
+        headerOwner.setText(nama);
+        headerEmail.setText(email);
+//        Picasso.with(getBaseContext())
+//                .load(imgageUrl)
+//                .placeholder(R.drawable.no_avatar)
+//                .error(R.drawable.no_avatar)
+//                .into(fotoProfile);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.side_profile) {
+
+        } else if (id == R.id.side_log_gps) {
+
+        } else if (id == R.id.side_log_ignition) {
+
+        } else if (id == R.id.side_log_camera) {
+
+        } else if (id == R.id.side_log_vibration) {
+
+        } else if (id == R.id.side_logout) {
+            gotoLogout();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void gotoLogout() {
+        sessionManager.logout();
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void settupBottomNavigation() {
@@ -79,6 +166,8 @@ public class MainActivity extends AppCompatActivity {
                                 return true;
                             case R.id.realtime_maps:
                                 toolbarTitle.setText(R.string.bottom_maps);
+                                fragment = new RealtimeMapsFragment();
+                                loadFragment(fragment);
                                 return true;
                             case R.id.capture_image:
                                 toolbarTitle.setText(R.string.bottom_capture);
@@ -167,12 +256,4 @@ public class MainActivity extends AppCompatActivity {
             circularReveal.start();
         }
     }
-
-//    @OnClick(R.id.logout)
-//    public void goLogout(){
-//        sessionManager.logout();
-//        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//        startActivity(intent);
-//        finish();
-//    }
 }

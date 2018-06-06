@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#0125FF</color>
+    <!--App Theme-->
+    <color name="colorPrimaryApp">#00006C</color>
+    <color name="colorPrimaryDarkApp">#00006C</color>
+    <color name="colorAccentApp">#FFF</color>
+
+    <!--No ActionBar-->
+    <color name="colorPrimary">#00006C</color>
+    <color name="colorPrimaryDark">#00006C</color>
     <color name="colorAccent">#906200EE</color>
 
     <!--Indigo Color-->
@@ -21,5 +27,5 @@
     <color name="white">#FFFFFF</color>
     <color name="blue_default">#2A48FF</color>
 
-    <color name="bgBottomNavigation">#304FFE</color>
+    <color name="bgBottomNavigation">#00006C</color>
 </resources>

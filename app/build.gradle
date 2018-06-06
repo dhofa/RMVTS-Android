@@ -50,6 +50,9 @@ dependencies {
     //org Apache for String utils validation
     implementation 'org.apache.commons:commons-lang3:3.5'
 
+    //circle images
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+
     //chart
     implementation 'com.github.bmarrdev:android-DecoView-charting:v1.2'
 

@@ -25,6 +25,8 @@ public class SessionManager {
     public static final String address = "Address";
     public static final String vehicle_type = "VehicleType";
     public static final String id_user = "IdUser";
+    public static final String last_latitude = "Latitude";
+    public static final String last_longitude = "Longitude";
 
     public SessionManager(Context context) {
         this.context = context;
@@ -39,6 +41,11 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void updateLocation(String latitude, String longitude){
+        editor.putString(last_latitude, latitude);
+        editor.putString(last_longitude, longitude);
+        editor.commit();
+    }
     public void saveUserData(String Owner,String Email,String FCM, String Plat, String Address, String Type, String IdUser){
         editor.putString(owner, Owner);
         editor.putString(email, Email);
@@ -97,6 +104,8 @@ public class SessionManager {
         user.put(address, pref.getString(address, null));
         user.put(vehicle_type, pref.getString(vehicle_type, null));
         user.put(id_user, pref.getString(id_user, null));
+        user.put(last_latitude, pref.getString(last_latitude, null));
+        user.put(last_longitude, pref.getString(last_longitude, null));
         return user;
     }
 }

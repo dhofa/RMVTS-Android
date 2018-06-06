@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RealtimeMapsMenu.RealtimeMapsFragment;
+
 public class SlidingTabMapsAdapter extends FragmentPagerAdapter {
 
     public SlidingTabMapsAdapter(FragmentManager fm) {

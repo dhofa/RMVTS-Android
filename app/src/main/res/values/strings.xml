@@ -23,7 +23,7 @@
     <string name="header_owner">Owner</string>
     <string name="header_plat_nomor">Plat Nomor</string>
     <string name="menu_log">LOG</string>
-    <string name="menu_sign_out">SIGN OUT</string>
+    <string name="menu_sign_out">Logout</string>
     <string name="togle_alarm">togle_alarm</string>
     <string name="togle_ignition">togle_ignition</string>
     <string name="togle_bottom_sheet">togle_bottom_sheet</string>
@@ -50,5 +50,11 @@
     <string name="bottom_your_location">Log Vehicle</string>
     <string name="bottom_capture">Snap Capture</string>
     <string name="bottom_log">Log Activity</string>
+    <string name="log_vibration">Log Vibration</string>
+    <string name="log_gps">Log Gps</string>
+    <string name="log_ignition">Log Ignition</string>
+    <string name="log_camera">Log Camera</string>
+    <string name="profile">Profile</string>
+    <string name="need_gps">Access GPS Required</string>
 
 </resources>

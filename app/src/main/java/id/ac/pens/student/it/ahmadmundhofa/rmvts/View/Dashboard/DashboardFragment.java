@@ -102,10 +102,7 @@ public class DashboardFragment extends Fragment {
         seriesJamKerja.addArcSeriesItemListener(new SeriesItem.SeriesItemListener() {
             @Override
             public void onSeriesItemAnimationProgress(float percentComplete, float currentPosition) {
-//                float percentFilled = ((currentPosition - seriesJamKerja.getMinValue()) / (seriesJamKerja.getMaxValue() - seriesJamKerja.getMinValue()));
-//                textPercentage.setText(String.format(Locale.ENGLISH, format, percentFilled * 100f));
                 if (currentPosition == total_jam) {
-//                    tv_jam_kerja.setText(String.format(Locale.ENGLISH, format, currentPosition));
                     seriesJamKerja.setColor(Color.parseColor("#EAE6E5"));
                 }
             }
@@ -127,7 +124,7 @@ public class DashboardFragment extends Fragment {
         mainContent.setVisibility(View.INVISIBLE);
         progressbar.setVisibility(View.VISIBLE);
 
-        sessionManager = new SessionManager(getActivity().getApplicationContext());
+        sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
         dataSession = sessionManager.getUserDetails();
         token = dataSession.get(SessionManager.token);
 
@@ -141,6 +138,7 @@ public class DashboardFragment extends Fragment {
                     if(dataResponse!=null){
                         settupDataRelay(dataResponse);
                         LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
+                        sessionManager.updateLocation(String.valueOf(lokasi.latitude),String.valueOf(lokasi.longitude));
                         locationVehicle(lokasi);
                     }
                 }else{
@@ -233,9 +231,6 @@ public class DashboardFragment extends Fragment {
             titleAlamat.setText(locationPinned[0]);
             detailAlamat.setText(locationPinned[1]);
         }
-
-//        headerOwner.setText(dataSession.get(SessionManager.owner));
-//        headerPlat.setText(dataSession.get(SessionManager.plate_number));
         mainContent.setVisibility(View.VISIBLE);
         progressbar.setVisibility(View.INVISIBLE);
     }
