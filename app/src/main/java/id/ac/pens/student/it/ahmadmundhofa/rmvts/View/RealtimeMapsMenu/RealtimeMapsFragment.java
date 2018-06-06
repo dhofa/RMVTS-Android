@@ -176,7 +176,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
                 myLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 LatLng current_location = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
                 marker_android = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_my_location)).position(current_location).title("My Location"));
-                settupDashboardData();
+                getLastLocationApi();
             } else {
                 requestPermissions();
             }
@@ -212,7 +212,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
                 .setAction(getString(actionStringId), listener).show();
     }
 
-    private void settupDashboardData() {
+    private void getLastLocationApi() {
         sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
         dataSession = sessionManager.getUserDetails();
         token = dataSession.get(SessionManager.token);

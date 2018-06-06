@@ -36,7 +36,8 @@ import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.Dashboard.DashboardFragment;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LoginMenu.LoginActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RealtimeMapsMenu.RealtimeMapsFragment;
-import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.SnapCapture.SnapCaptureFragment;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.SnapCaptureMenu.SnapCaptureFragment;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.TrackVehicleMenu.TrackVehicleFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -177,6 +178,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 return true;
                             case R.id.log_vehicle:
                                 toolbarTitle.setText(R.string.bottom_your_location);
+                                fragment = new TrackVehicleFragment();
+                                loadFragment(fragment);
                                 return true;
                             case R.id.log_activity:
                                 toolbarTitle.setText(R.string.bottom_log);
