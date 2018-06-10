@@ -130,8 +130,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.side_profile) {
 
-        } else if (id == R.id.side_log_gps) {
-
         } else if (id == R.id.side_log_ignition) {
 
         } else if (id == R.id.side_log_camera) {

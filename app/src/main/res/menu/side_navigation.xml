@@ -6,10 +6,6 @@
         android:icon="@drawable/ic_verifikasi"
         android:title="@string/profile" />
     <item
-        android:id="@+id/side_log_gps"
-        android:icon="@drawable/icon_2"
-        android:title="@string/log_gps" />
-    <item
         android:id="@+id/side_log_ignition"
         android:icon="@drawable/icon_3"
         android:title="@string/log_ignition" />

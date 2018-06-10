@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -23,6 +24,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiModels;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiService;
@@ -41,6 +43,9 @@ public class SnapCaptureFragment extends Fragment {
 
     @BindView(R.id.progressbar)
     ProgressBar progressbar;
+
+    @BindView(R.id.btn_take_foto)
+    TextView btnTakeFoto;
 
     private Unbinder unbinder = null;
     private String token;
@@ -93,10 +98,9 @@ public class SnapCaptureFragment extends Fragment {
         }
     };
 
-
-    private void settupDashboardData() {
+    @OnClick(R.id.btn_take_foto)
+    public void settupDashboardData() {
         progressbar.setVisibility(View.VISIBLE);
-
         sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
         dataSession = sessionManager.getUserDetails();
         token = dataSession.get(SessionManager.token);
@@ -115,11 +119,13 @@ public class SnapCaptureFragment extends Fragment {
                 }else{
                     Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
+                progressbar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
                 Toast.makeText(getActivity(), "Fail to get data..", Toast.LENGTH_SHORT).show();
+                progressbar.setVisibility(View.GONE);
             }
         });
     }

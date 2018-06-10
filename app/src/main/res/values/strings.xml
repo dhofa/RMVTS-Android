@@ -51,12 +51,16 @@
     <string name="bottom_capture">Snap Capture</string>
     <string name="bottom_log">Log Activity</string>
     <string name="log_vibration">Log Vibration</string>
-    <string name="log_gps">Log Gps</string>
     <string name="log_ignition">Log Ignition</string>
     <string name="log_camera">Log Camera</string>
     <string name="profile">Profile</string>
     <string name="need_gps">Access GPS Required</string>
     <string name="dashboard">Dashboard</string>
     <string name="select_periode">Select Periode</string>
+    <string name="already_have_account">Already have account?</string>
+    <string name="owner">Owner</string>
+    <string name="plate_number">Plate number</string>
+    <string name="address">Address</string>
+    <string name="vehicle_type">Vehicle type</string>
 
 </resources>

@@ -631,5 +631,6 @@ public class RemoteActivity extends AppCompatActivity {
         intent.putExtra(MainActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY);
 
         ActivityCompat.startActivity(this, intent, options.toBundle());
+        finish();
     }
 }

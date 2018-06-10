@@ -272,9 +272,11 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        marker_android.remove();
-        LatLng current_location = new LatLng(location.getLatitude(), location.getLongitude());
-        marker_android = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_my_location)).position(current_location).title("My Location"));
+        if(marker_android != null){
+            marker_android.remove();
+            LatLng current_location = new LatLng(location.getLatitude(), location.getLongitude());
+            marker_android = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_my_location)).position(current_location).title("My Location"));
+        }
     }
 
     @Override
