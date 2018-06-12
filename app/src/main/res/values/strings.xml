@@ -62,5 +62,8 @@
     <string name="plate_number">Plate number</string>
     <string name="address">Address</string>
     <string name="vehicle_type">Vehicle type</string>
+    <string name="press_button_to_take_the_picture_from_your_iot_device">Press button to take the picture from your IoT device</string>
+    <string name="not_found">Location not found</string>
+    <string name="detail_not_found">Detail location not found</string>
 
 </resources>

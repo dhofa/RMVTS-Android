@@ -7,7 +7,7 @@
     tools:context=".View.ProfileSideMenu.ProfileActivity">
 
     <LinearLayout
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="140dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="100dp"
@@ -141,7 +141,7 @@
         android:id="@+id/foto_profile"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="90dp"
         android:src="@drawable/background_corner_circle_transparent"
         android:layout_centerHorizontal="true"/>
 </RelativeLayout>

@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.nkzawa.socketio.client.Socket;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
@@ -35,6 +36,7 @@ import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.Dashboard.DashboardFragment;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LoginMenu.LoginActivity;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.ProfileSideMenu.ProfileActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RealtimeMapsMenu.RealtimeMapsFragment;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.SnapCaptureMenu.SnapCaptureFragment;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.TrackVehicleMenu.TrackVehicleFragment;
@@ -114,22 +116,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void showHeader() {
         String nama  = dataSession.get(SessionManager.owner);
         String email = dataSession.get(SessionManager.email);
-//        String imgageUrl = presenter.getDataSession().getFotoUrl();
+        String imgageUrl = dataSession.get(SessionManager.foto_profile);
+
         headerOwner.setText(nama);
         headerEmail.setText(email);
-//        Picasso.with(getBaseContext())
-//                .load(imgageUrl)
-//                .placeholder(R.drawable.no_avatar)
-//                .error(R.drawable.no_avatar)
-//                .into(fotoProfile);
+        Picasso.get().load(imgageUrl).into(fotoProfile);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-
+        Intent goTo;
         if (id == R.id.side_profile) {
-
+            goTo = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(goTo);
         } else if (id == R.id.side_log_ignition) {
 
         } else if (id == R.id.side_log_camera) {

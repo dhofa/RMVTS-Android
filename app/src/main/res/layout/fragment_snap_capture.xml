@@ -28,7 +28,7 @@
         android:textSize="12sp"
         android:layout_marginTop="10dp"
         android:textAlignment="center"
-        android:text="Press button to take the picture from your IoT device"/>
+        android:text="@string/press_button_to_take_the_picture_from_your_iot_device"/>
     <TextView
         android:id="@+id/btn_take_foto"
         android:layout_width="match_parent"

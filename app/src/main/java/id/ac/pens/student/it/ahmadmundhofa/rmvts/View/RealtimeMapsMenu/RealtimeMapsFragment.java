@@ -81,6 +81,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
     private Marker marker_vehicle;
     private String URL_HOST = "https://rmvts.herokuapp.com/";
     private Socket mSocket;
+    private LatLng vehicle_last_location;
 
     public RealtimeMapsFragment(){}
 
@@ -225,36 +226,45 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
                 if (Objects.requireNonNull(response.body()).getStatus().equals("success")) {
                     DataResponse dataResponse = response.body().getData();
                     if (dataResponse != null) {
-                        LatLng vehicle_last_location = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
-                        sessionManager.updateLocation(String.valueOf(vehicle_last_location.latitude), String.valueOf(vehicle_last_location.longitude));
-                        marker_vehicle = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vehicle_location)).position(vehicle_last_location).title("Your Vehicle"));
+                        if(dataResponse.getVehicleData().getLastLatitude() == 0 && dataResponse.getVehicleData().getLastLongitude() ==0){
+                            vehicle_last_location = new LatLng(0,0);
+                            Toast.makeText(getActivity(), "Anda belum memiliki data lokasi terakhir..", Toast.LENGTH_SHORT).show();
+                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                                    .target(marker_android.getPosition())
+                                    .bearing(5)
+                                    .tilt(45)
+                                    .zoom(14)
+                                    .build()));
+                        }else{
+                            vehicle_last_location = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
+                            sessionManager.updateLocation(String.valueOf(vehicle_last_location.latitude), String.valueOf(vehicle_last_location.longitude));
+                            marker_vehicle = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vehicle_location)).position(vehicle_last_location).title("Your Vehicle"));
 
-                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                        builder.include(marker_android.getPosition());
-                        builder.include(marker_vehicle.getPosition());
-
-
-                        LatLngBounds bounds = builder.build();
-                        int padding = 100; // offset from edges of the map in pixels
-                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                        googleMap.animateCamera(cu, new GoogleMap.CancelableCallback() {
-                            @Override
-                            public void onFinish() {
-                                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                                        .target(googleMap.getCameraPosition().target)
-                                        .bearing(5)
-                                        .tilt(45)
-                                        .zoom(14)
-                                        .build()));
-                            }
-
-                            @Override
-                            public void onCancel() {
-
-                            }
-                        });
+                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                            builder.include(marker_android.getPosition());
+                            builder.include(marker_vehicle.getPosition());
 
 
+                            LatLngBounds bounds = builder.build();
+                            int padding = 100; // offset from edges of the map in pixels
+                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                            googleMap.animateCamera(cu, new GoogleMap.CancelableCallback() {
+                                @Override
+                                public void onFinish() {
+                                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                                            .target(googleMap.getCameraPosition().target)
+                                            .bearing(5)
+                                            .tilt(45)
+                                            .zoom(14)
+                                            .build()));
+                                }
+
+                                @Override
+                                public void onCancel() {
+
+                                }
+                            });
+                        }
                     }
                 } else {
                     Toast.makeText(getActivity(), Objects.requireNonNull(response.body()).getMessage(), Toast.LENGTH_SHORT).show();

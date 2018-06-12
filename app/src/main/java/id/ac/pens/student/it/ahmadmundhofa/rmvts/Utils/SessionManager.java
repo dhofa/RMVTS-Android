@@ -22,6 +22,7 @@ public class SessionManager {
     public static final String email = "Email";
     public static final String fcm_token = "FcmToken";
     public static final String plate_number = "PlateNumber";
+    public static final String foto_profile = "FotoProfile";
     public static final String address = "Address";
     public static final String vehicle_type = "VehicleType";
     public static final String id_user = "IdUser";
@@ -57,6 +58,11 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void saveFotoProfile(String url){
+        editor.putString(foto_profile,url);
+        editor.commit();
+    }
+
     public void checkLogin(){
         if (!this.is_login()){
             Intent i = new Intent(context, LoginActivity.class);
@@ -84,6 +90,7 @@ public class SessionManager {
         editor.remove(address);
         editor.remove(vehicle_type);
         editor.remove(id_user);
+        editor.remove(foto_profile);
         editor.clear();
         editor.commit();
         editor.apply();
@@ -106,6 +113,7 @@ public class SessionManager {
         user.put(id_user, pref.getString(id_user, null));
         user.put(last_latitude, pref.getString(last_latitude, null));
         user.put(last_longitude, pref.getString(last_longitude, null));
+        user.put(foto_profile, pref.getString(foto_profile, null));
         return user;
     }
 }

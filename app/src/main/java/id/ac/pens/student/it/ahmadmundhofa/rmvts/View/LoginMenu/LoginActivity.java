@@ -201,8 +201,9 @@ public class LoginActivity extends AppCompatActivity {
         String address= data.getVehicleData().getAddress();
         String type   = data.getVehicleData().getVehicleType();
         String token  = data.getToken();
-        String id_user= data.getIdRaspberry();
-
+        String id_user  = data.getIdRaspberry();
+        String url_foto = data.getVehicleData().getUserPhotos();
+        sessionManager.saveFotoProfile(url_foto);
         sessionManager.saveUserData(owner,str_email, fcm_token, plat, address, type, id_user);
         sessionManager.createSession(token);
     }

@@ -19,7 +19,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -53,28 +57,6 @@ public class SnapCaptureFragment extends Fragment {
     private HashMap<String, String> dataSession;
     private String URL_HOST = "https://rmvts.herokuapp.com/";
     private Socket mSocket;
-
-    public SnapCaptureFragment(){}
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_snap_capture, container, false);
-        unbinder = ButterKnife.bind(this, view);
-        settupSocket();
-        return view;
-    }
-
-    private void settupSocket() {
-        try {
-            mSocket = IO.socket(URL_HOST);
-        } catch (URISyntaxException e) {
-            Log.v("Error karena => ", e.toString());
-        }
-
-        mSocket.on("snap-capture", snapCaptureEmitter);
-        mSocket.connect();
-    }
-
     private Emitter.Listener snapCaptureEmitter = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -98,7 +80,45 @@ public class SnapCaptureFragment extends Fragment {
         }
     };
 
+    public SnapCaptureFragment() {
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_snap_capture, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        settupSocket();
+        return view;
+    }
+
+    private void settupSocket() {
+        try {
+            mSocket = IO.socket(URL_HOST);
+        } catch (URISyntaxException e) {
+            Log.v("Error karena => ", e.toString());
+        }
+
+        mSocket.on("refresh_foto", snapCaptureEmitter);
+        mSocket.connect();
+    }
+
     @OnClick(R.id.btn_take_foto)
+    public void takeFoto() {
+        JSONObject content = new JSONObject();
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss", new Locale("in", "ID"));
+        Date date = new Date();
+
+        String current_time = String.valueOf(dateFormat.format(date));
+//        Toast.makeText(getActivity(), current_time, Toast.LENGTH_SHORT).show();
+        try {
+            content.put("msg", current_time);
+        } catch (JSONException e) {
+            return;
+        }
+
+        mSocket.emit("ambilfoto", content);
+    }
+
     public void settupDashboardData() {
         progressbar.setVisibility(View.VISIBLE);
         sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
@@ -110,13 +130,13 @@ public class SnapCaptureFragment extends Fragment {
         call.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                if(response.body().getStatus().equals("success")){
+                if (response.body().getStatus().equals("success")) {
                     DataResponse dataResponse = response.body().getData();
-                    if(dataResponse!=null){
+                    if (dataResponse != null) {
                         //TODO: Get URL last image and set into image view
 
                     }
-                }else{
+                } else {
                     Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 progressbar.setVisibility(View.GONE);

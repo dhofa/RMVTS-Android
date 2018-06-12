@@ -1,6 +1,7 @@
 package id.ac.pens.student.it.ahmadmundhofa.rmvts.View.TrackVehicleMenu;
 
 
+import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +11,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,12 +28,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiModels;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiService;
@@ -46,12 +53,17 @@ import retrofit2.Response;
 public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback {
     @BindView(R.id.MyMap)
     MapView myMap;
+
+    @BindView(R.id.input_date)
+    TextView inputDate;
+
     Polyline line;
     private GoogleMap googleMap;
     private String token;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
     private Unbinder unbinder = null;
+    private int hari, bulan, tahun;
 
     public TrackVehicleFragment() {
     }
@@ -137,6 +149,32 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
 
             }
         });
+    }
+
+    @OnClick(R.id.input_date)
+    public void setInputDate(){
+        final Calendar c = Calendar.getInstance();
+        tahun = c.get(Calendar.YEAR);
+        bulan = c.get(Calendar.MONTH);
+        hari = c.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                        inputDate.setHint(String.valueOf(dayOfMonth)+"/"+String.valueOf(dayOfMonth)+"/"+String.valueOf(year));
+                    }
+                }, tahun, bulan, hari);
+        datePickerDialog.show();
+    }
+
+    @OnClick(R.id.search)
+    public void searchDataPeriode(){
+        String periode = inputDate.getHint().toString();
+        Toast.makeText(getActivity(), periode, Toast.LENGTH_SHORT).show();
+
+
     }
 
     @Override

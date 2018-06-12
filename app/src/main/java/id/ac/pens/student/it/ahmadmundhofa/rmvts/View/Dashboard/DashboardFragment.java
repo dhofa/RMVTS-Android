@@ -137,9 +137,20 @@ public class DashboardFragment extends Fragment {
                     DataResponse dataResponse = response.body().getData();
                     if(dataResponse!=null){
                         settupDataRelay(dataResponse);
-                        LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
-                        sessionManager.updateLocation(String.valueOf(lokasi.latitude),String.valueOf(lokasi.longitude));
-                        locationVehicle(lokasi);
+                        if(dataResponse.getVehicleData().getLastLatitude() == 0 && dataResponse.getVehicleData().getLastLongitude() == 0){
+                            titleAlamat.setText(R.string.not_found);
+                            detailAlamat.setText(R.string.detail_not_found);
+                            Toast.makeText(getActivity(), "Anda belum memiliki data lokasi terakhir..", Toast.LENGTH_SHORT).show();
+                            mainContent.animate().alpha(1.0f).setDuration(1000);
+                            progressbar.setVisibility(View.INVISIBLE);
+                        }else{
+                            LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
+                            sessionManager.updateLocation(String.valueOf(lokasi.latitude),String.valueOf(lokasi.longitude));
+                            locationVehicle(lokasi);
+                        }
+
+                        String url_foto = dataResponse.getVehicleData().getUserPhotos();
+                        sessionManager.saveFotoProfile(url_foto);
                     }
                 }else{
                     Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -239,7 +250,7 @@ public class DashboardFragment extends Fragment {
     public String[] getLocationNameAndAddress(LatLng posisiLatLong) {
 
         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-        String[] locationPinned = {"Location not found", "Detail location not found"};
+        String[] locationPinned = {getString(R.string.not_found), getString(R.string.detail_not_found)};
         getActivity().runOnUiThread(() -> {
             try {
                 int MAX_RESULTS = 1;
