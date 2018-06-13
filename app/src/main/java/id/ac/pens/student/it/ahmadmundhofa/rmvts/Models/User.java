@@ -10,6 +10,12 @@ public class User {
     @SerializedName("password")
     @Expose
     private String password;
+    @SerializedName("fcm_token")
+    @Expose
+    private String fcmToken;
+    @SerializedName("token")
+    @Expose
+    private String token;
 
     public String getEmail() {
         return email;
@@ -26,4 +32,21 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
 }

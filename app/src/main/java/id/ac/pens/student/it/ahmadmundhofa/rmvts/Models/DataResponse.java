@@ -9,15 +9,12 @@ public class DataResponse {
     @SerializedName("vehicle_data")
     @Expose
     private VehicleData vehicleData;
-    @SerializedName("fcm_token")
+    @SerializedName("relay")
     @Expose
-    private String fcmToken;
-    @SerializedName("token")
+    private Relay relay;
+    @SerializedName("android_device")
     @Expose
-    private String token;
-    @SerializedName("id_raspberry")
-    @Expose
-    private String idRaspberry;
+    private AndroidDevice androidDevice;
     @SerializedName("user")
     @Expose
     private User user;
@@ -26,10 +23,39 @@ public class DataResponse {
     private List<Koordinat> koordinat = null;
     @SerializedName("driver")
     @Expose
-    private List<Driver> driver = null;
-    @SerializedName("relay")
+    private List<Object> driver = null;
+    @SerializedName("vibration")
     @Expose
-    private Relay relay;
+    private List<Vibration> vibration = null;
+    @SerializedName("ignition")
+    @Expose
+    private List<Ignition> ignition = null;
+    @SerializedName("buzzer")
+    @Expose
+    private List<Buzzer> buzzer = null;
+    @SerializedName("log_activity")
+    @Expose
+    private List<LogActivity> logActivity = null;
+    @SerializedName("_id")
+    @Expose
+    private String id;
+    @SerializedName("createdAt")
+    @Expose
+    private String createdAt;
+    @SerializedName("updatedAt")
+    @Expose
+    private String updatedAt;
+    @SerializedName("__v")
+    @Expose
+    private Integer v;
+
+    public VehicleData getVehicleData() {
+        return vehicleData;
+    }
+
+    public void setVehicleData(VehicleData vehicleData) {
+        this.vehicleData = vehicleData;
+    }
 
     public Relay getRelay() {
         return relay;
@@ -39,12 +65,20 @@ public class DataResponse {
         this.relay = relay;
     }
 
-    public List<Driver> getDriver() {
-        return driver;
+    public AndroidDevice getAndroidDevice() {
+        return androidDevice;
     }
 
-    public void setDriver(List<Driver> driver) {
-        this.driver = driver;
+    public void setAndroidDevice(AndroidDevice androidDevice) {
+        this.androidDevice = androidDevice;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<Koordinat> getKoordinat() {
@@ -55,42 +89,76 @@ public class DataResponse {
         this.koordinat = koordinat;
     }
 
-    public String getIdRaspberry() {
-        return idRaspberry;
-    }
-    public User getUser() {
-        return user;
+    public List<Object> getDriver() {
+        return driver;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setDriver(List<Object> driver) {
+        this.driver = driver;
     }
 
-    public void setIdRaspberry(String idRaspberry) {
-        this.idRaspberry = idRaspberry;
-    }
-    public VehicleData getVehicleData() {
-        return vehicleData;
+    public List<Vibration> getVibration() {
+        return vibration;
     }
 
-    public void setVehicleData(VehicleData vehicleData) {
-        this.vehicleData = vehicleData;
+    public void setVibration(List<Vibration> vibration) {
+        this.vibration = vibration;
     }
 
-    public String getFcmToken() {
-        return fcmToken;
+    public List<Ignition> getIgnition() {
+        return ignition;
     }
 
-    public void setFcmToken(String fcmToken) {
-        this.fcmToken = fcmToken;
+    public void setIgnition(List<Ignition> ignition) {
+        this.ignition = ignition;
     }
 
-    public String getToken() {
-        return token;
+    public List<Buzzer> getBuzzer() {
+        return buzzer;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setBuzzer(List<Buzzer> buzzer) {
+        this.buzzer = buzzer;
+    }
+
+    public List<LogActivity> getLogActivity() {
+        return logActivity;
+    }
+
+    public void setLogActivity(List<LogActivity> logActivity) {
+        this.logActivity = logActivity;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Integer getV() {
+        return v;
+    }
+
+    public void setV(Integer v) {
+        this.v = v;
     }
 
 }

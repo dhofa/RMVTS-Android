@@ -7,7 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlActivated">#D3DCED</item>
-        <item name="colorControlNormal">#405487</item>
+        <item name="colorControlNormal">#FFF</item>
     </style>
 
     <!-- Base application theme. -->

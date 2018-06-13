@@ -133,34 +133,37 @@ public class DashboardFragment extends Fragment {
         call.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                if(response.body().getStatus().equals("success")){
-                    DataResponse dataResponse = response.body().getData();
-                    if(dataResponse!=null){
-                        settupDataRelay(dataResponse);
-                        if(dataResponse.getVehicleData().getLastLatitude() == 0 && dataResponse.getVehicleData().getLastLongitude() == 0){
-                            titleAlamat.setText(R.string.not_found);
-                            detailAlamat.setText(R.string.detail_not_found);
-                            Toast.makeText(getActivity(), "Anda belum memiliki data lokasi terakhir..", Toast.LENGTH_SHORT).show();
-                            mainContent.animate().alpha(1.0f).setDuration(1000);
-                            progressbar.setVisibility(View.INVISIBLE);
-                        }else{
-                            LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
-                            sessionManager.updateLocation(String.valueOf(lokasi.latitude),String.valueOf(lokasi.longitude));
-                            locationVehicle(lokasi);
+                if(getActivity() != null && isAdded()){
+                    if(response.body().getStatus().equals("success")){
+                        DataResponse dataResponse = response.body().getData();
+                        if(dataResponse!=null){
+                            settupDataRelay(dataResponse);
+                            if(dataResponse.getVehicleData().getLastLatitude() == 0 && dataResponse.getVehicleData().getLastLongitude() == 0){
+                                titleAlamat.setText(getResources().getString(R.string.not_found));
+                                detailAlamat.setText(getResources().getString(R.string.detail_not_found));
+                                Toast.makeText(getActivity(), "Anda belum memiliki data lokasi terakhir..", Toast.LENGTH_SHORT).show();
+                                mainContent.animate().alpha(1.0f).setDuration(1000);
+                                progressbar.setVisibility(View.INVISIBLE);
+                            }else{
+                                LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
+                                sessionManager.updateLocation(String.valueOf(lokasi.latitude),String.valueOf(lokasi.longitude));
+                                locationVehicle(lokasi);
+                            }
+
+                            String url_foto = dataResponse.getVehicleData().getUserPhotos();
+                            sessionManager.saveFotoProfile(url_foto);
                         }
-
-                        String url_foto = dataResponse.getVehicleData().getUserPhotos();
-                        sessionManager.saveFotoProfile(url_foto);
+                    }else{
+                        Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
             }
 
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
-                Toast.makeText(getActivity(), "Fail to get data..", Toast.LENGTH_SHORT).show();
+                if(getActivity() != null && isAdded()) {
+                    Toast.makeText(getActivity(), "Fail to get data..", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -210,27 +213,27 @@ public class DashboardFragment extends Fragment {
     }
 
     private void resultAlarmFalse() {
-        textAlarm.setText(R.string.alarm_off);
+        textAlarm.setText(getResources().getString(R.string.alarm_off));
     }
 
     private void resultAlarmTrue() {
-        textAlarm.setText(R.string.alarm_on);
+        textAlarm.setText(getResources().getString(R.string.alarm_on));
     }
 
     private void resultParkingEventFalse() {
-        textMode.setText(R.string.parkir_off);
+        textMode.setText(getResources().getString(R.string.parkir_off));
     }
 
     private void resultParkingEventTrue() {
-        textMode.setText(R.string.parkir_on);
+        textMode.setText(getResources().getString(R.string.parkir_on));
     }
 
     private void resultGpsFalse() {
-        textGps.setText(R.string.gps_off);
+        textGps.setText(getResources().getString(R.string.gps_off));
     }
 
     private void resultGpsTrue() {
-        textGps.setText(R.string.gps_on);
+        textGps.setText(getResources().getString(R.string.gps_on));
     }
 
     private void locationVehicle(LatLng lokasi) {
@@ -250,7 +253,7 @@ public class DashboardFragment extends Fragment {
     public String[] getLocationNameAndAddress(LatLng posisiLatLong) {
 
         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-        String[] locationPinned = {getString(R.string.not_found), getString(R.string.detail_not_found)};
+        String[] locationPinned = {getResources().getString(R.string.not_found), getResources().getString(R.string.detail_not_found)};
         getActivity().runOnUiThread(() -> {
             try {
                 int MAX_RESULTS = 1;

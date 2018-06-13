@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
@@ -24,6 +25,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.socketio.client.Socket;
 import com.squareup.picasso.Picasso;
@@ -35,6 +37,7 @@ import butterknife.ButterKnife;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.Dashboard.DashboardFragment;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LogActivityMenu.LogActivityFragment;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LoginMenu.LoginActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.ProfileSideMenu.ProfileActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RealtimeMapsMenu.RealtimeMapsFragment;
@@ -43,9 +46,6 @@ import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.TrackVehicleMenu.TrackVehi
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-
-//    @BindView(R.id.logout)
-//    LinearLayout logout;
 
     @BindView(R.id.root_layout)
     CoordinatorLayout rootLayout;
@@ -62,9 +62,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    TextView headerOwner, headerEmail;
-    ImageView fotoProfile;
-
+    private TextView headerOwner, headerEmail;
+    private ImageView fotoProfile;
+    private Fragment fragment;
+    private boolean twice = false;
     private BottomSheetBehavior sheetBehavior;
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Socket mSocket;
     private int revealX;
     private int revealY;
-    ActionBarDrawerToggle toggle;
+    private ActionBarDrawerToggle toggle;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
 
@@ -87,6 +88,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         settupTransition(savedInstanceState);
         settupSideNavigation();
         settupBottomNavigation();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         Fragment fragment = new DashboardFragment();
         loadFragment(fragment);
     }
@@ -157,33 +163,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        Fragment fragment;
                         switch (item.getItemId()) {
                             case R.id.dashboard:
                                 toolbarTitle.setText(R.string.bottom_dashboard);
                                 fragment = new DashboardFragment();
                                 loadFragment(fragment);
-                                return true;
+                                break;
                             case R.id.realtime_maps:
                                 toolbarTitle.setText(R.string.bottom_maps);
                                 fragment = new RealtimeMapsFragment();
                                 loadFragment(fragment);
-                                return true;
+                                break;
                             case R.id.capture_image:
                                 toolbarTitle.setText(R.string.bottom_capture);
                                 fragment = new SnapCaptureFragment();
                                 loadFragment(fragment);
-                                return true;
+                                break;
                             case R.id.log_vehicle:
                                 toolbarTitle.setText(R.string.bottom_your_location);
                                 fragment = new TrackVehicleFragment();
                                 loadFragment(fragment);
-                                return true;
+                                break;
                             case R.id.log_activity:
                                 toolbarTitle.setText(R.string.bottom_log);
-                                return true;
+                                fragment = new LogActivityFragment();
+                                loadFragment(fragment);
+                                break;
                         }
-                        return false;
+                        return true;
                     }
                 });
     }
@@ -258,6 +265,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
             circularReveal.start();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (fragment instanceof DashboardFragment) {
+                if (twice) {
+                    finish();
+                }
+                twice = true;
+                Toast.makeText(this, "Please press back again to exit", Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        twice = false;
+                    }
+                }, 3000);
+                navigation.setSelectedItemId(R.id.dashboard);
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 }

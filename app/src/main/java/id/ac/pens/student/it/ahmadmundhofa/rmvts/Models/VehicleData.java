@@ -9,10 +9,10 @@ public class VehicleData {
     private LastStateIgnition lastStateIgnition;
     @SerializedName("last_latitude")
     @Expose
-    private Integer lastLatitude;
+    private Double lastLatitude;
     @SerializedName("last_longitude")
     @Expose
-    private Integer lastLongitude;
+    private Double lastLongitude;
     @SerializedName("user_photos")
     @Expose
     private String userPhotos;
@@ -40,19 +40,19 @@ public class VehicleData {
         this.lastStateIgnition = lastStateIgnition;
     }
 
-    public Integer getLastLatitude() {
+    public Double getLastLatitude() {
         return lastLatitude;
     }
 
-    public void setLastLatitude(Integer lastLatitude) {
+    public void setLastLatitude(Double lastLatitude) {
         this.lastLatitude = lastLatitude;
     }
 
-    public Integer getLastLongitude() {
+    public Double getLastLongitude() {
         return lastLongitude;
     }
 
-    public void setLastLongitude(Integer lastLongitude) {
+    public void setLastLongitude(Double lastLongitude) {
         this.lastLongitude = lastLongitude;
     }
 

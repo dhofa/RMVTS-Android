@@ -7,7 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDarkApp</item>
         <item name="colorAccent">@color/colorAccentApp</item>
         <item name="colorControlActivated">#D3DCED</item>
-        <item name="colorControlNormal">#405487</item>
+        <item name="colorControlNormal">#FFF</item>
     </style>
 
     <style name="ForBottomSheet" parent="Theme.AppCompat.Light.NoActionBar">

@@ -255,7 +255,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
                                             .target(googleMap.getCameraPosition().target)
                                             .bearing(5)
                                             .tilt(45)
-                                            .zoom(14)
+                                            .zoom(googleMap.getCameraPosition().zoom)
                                             .build()));
                                 }
 

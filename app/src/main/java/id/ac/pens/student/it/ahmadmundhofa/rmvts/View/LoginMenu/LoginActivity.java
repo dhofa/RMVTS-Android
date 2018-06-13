@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -162,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(response.body() != null){
                     if(response.body().getStatus().equals("success")){
                         DataResponse data = response.body().getData();
-                        saveDataUser(data,str_email,fcm_token);
+                        saveDataUser(data);
                         goToMain(view);
                     }else{
                         revertButtonAnimation(response.body().getMessage());
@@ -174,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
-                revertButtonAnimation("Failed Login, Try again..!");
+                revertButtonAnimation("Failed Login, Try again..! =>"+t.getMessage());
             }
         });
     }
@@ -195,14 +196,16 @@ public class LoginActivity extends AppCompatActivity {
         ActivityCompat.startActivity(this, intent, options.toBundle());
     }
 
-    private void saveDataUser(DataResponse data, String str_email, String fcm_token) {
+    private void saveDataUser(DataResponse data) {
         String owner  = data.getVehicleData().getOwner();
         String plat   = data.getVehicleData().getPlateNumber();
         String address= data.getVehicleData().getAddress();
         String type   = data.getVehicleData().getVehicleType();
-        String token  = data.getToken();
-        String id_user  = data.getIdRaspberry();
+        String token  = data.getUser().getToken();
+        String id_user  = data.getId();
         String url_foto = data.getVehicleData().getUserPhotos();
+        String str_email= data.getUser().getEmail();
+        String fcm_token= data.getUser().getFcmToken();
         sessionManager.saveFotoProfile(url_foto);
         sessionManager.saveUserData(owner,str_email, fcm_token, plat, address, type, id_user);
         sessionManager.createSession(token);
