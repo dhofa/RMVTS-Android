@@ -34,8 +34,9 @@ public interface ApiModels {
     @GET("api/get-dashboard")
     Call<ResponseModel> getDashboard(@Header("Authorization") String authorization);
 
-    @GET("api/gps")
-    Call<ResponseModel> getGpsData(@Header("Authorization") String authorization);
+    @GET("api/gps-periode")
+    Call<ResponseModel> getGpsData(@Header("Authorization") String authorization,
+                                   @Query("periode") String periode);
 
     @GET("api/get-images")
     Call<ResponseModel> getImages(@Header("Authorization") String authorization);

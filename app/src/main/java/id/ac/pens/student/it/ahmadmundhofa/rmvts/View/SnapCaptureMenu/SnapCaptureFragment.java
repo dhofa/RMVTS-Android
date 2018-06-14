@@ -1,12 +1,14 @@
 package id.ac.pens.student.it.ahmadmundhofa.rmvts.View.SnapCaptureMenu;
 
 
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +53,12 @@ public class SnapCaptureFragment extends Fragment {
 
     @BindView(R.id.btn_take_foto)
     TextView btnTakeFoto;
+
+    @BindView(R.id.image_capture)
+    ImageView imageCapture;
+
+    @BindView(R.id.keterangan)
+    TextView keterangan;
 
     private Unbinder unbinder = null;
     private String token;
@@ -117,13 +126,14 @@ public class SnapCaptureFragment extends Fragment {
         }
 
         mSocket.emit("ambilfoto", content);
+        progressbar.setVisibility(View.VISIBLE);
     }
 
     public void settupDashboardData() {
-        progressbar.setVisibility(View.VISIBLE);
         sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
         dataSession = sessionManager.getUserDetails();
         token = dataSession.get(SessionManager.token);
+        keterangan.setText(getResources().getString(R.string.getting_data));
 
         ApiModels apiService = ApiService.getHttp().create(ApiModels.class);
         Call<ResponseModel> call = apiService.getDashboard(token);
@@ -134,7 +144,9 @@ public class SnapCaptureFragment extends Fragment {
                     DataResponse dataResponse = response.body().getData();
                     if (dataResponse != null) {
                         //TODO: Get URL last image and set into image view
-
+                        String imgageUrl = dataResponse.getVehicleData().getLastDriverPhotos();
+                        Picasso.get().load(imgageUrl).into(imageCapture);
+                        keterangan.setText(getResources().getString(R.string.press_button_to_take_the_picture_from_your_iot_device));
                     }
                 } else {
                     Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();

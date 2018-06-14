@@ -65,5 +65,7 @@
     <string name="press_button_to_take_the_picture_from_your_iot_device">Press button to take the picture from your IoT device</string>
     <string name="not_found">Location not found</string>
     <string name="detail_not_found">Detail location not found</string>
+    <string name="take_snap_shot">Take Snap Shot</string>
+    <string name="getting_data">Getting data image..</string>
 
 </resources>

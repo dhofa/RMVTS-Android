@@ -8,7 +8,7 @@
 
     <ImageView
         android:src="@drawable/smart_city"
-        android:id="@+id/layout_top"
+        android:id="@+id/image_capture"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_marginEnd="20dp"
@@ -22,7 +22,7 @@
         android:id="@+id/keterangan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_top"
+        android:layout_below="@+id/image_capture"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:textSize="12sp"
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:text="Take Snap Shot"
+        android:text="@string/take_snap_shot"
         android:textColor="#FFF"
         android:textStyle="bold"
         android:textAlignment="center"

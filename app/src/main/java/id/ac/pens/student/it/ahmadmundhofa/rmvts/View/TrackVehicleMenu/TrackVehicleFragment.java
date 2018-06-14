@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +29,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -57,12 +60,16 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
     @BindView(R.id.input_date)
     TextView inputDate;
 
-    Polyline line;
+    @BindView(R.id.progressbar)
+    ProgressBar progressbar;
+
+    private Polyline line;
     private GoogleMap googleMap;
     private String token;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
     private Unbinder unbinder = null;
+    private boolean once = true;
     private int hari, bulan, tahun;
 
     public TrackVehicleFragment() {
@@ -89,44 +96,48 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
         if (this.googleMap != null) {
             this.googleMap.setBuildingsEnabled(false);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-5, 120), 3.5f));
-            settupGpsData();
+            if(once){
+                settupCurentDate();
+                once = false;
+            }
         }
     }
 
-    private void settupGpsData() {
+    private void settupCurentDate() {
+        progressbar.setVisibility(View.VISIBLE);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormatPeriode = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+        SimpleDateFormat dateFormatView = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        String periode = dateFormatPeriode.format(calendar.getTime());
+        String dateView= dateFormatView.format(calendar.getTime());
+        inputDate.setHint(dateView);
+        settupGpsData(periode);
+    }
+
+    private void settupGpsData(String periode) {
         sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
         dataSession = sessionManager.getUserDetails();
         token = dataSession.get(SessionManager.token);
 
         ApiModels apiService = ApiService.getHttp().create(ApiModels.class);
-        Call<ResponseModel> call = apiService.getGpsData(token);
+        Call<ResponseModel> call = apiService.getGpsData(token, periode);
         call.enqueue(new Callback<ResponseModel>() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                googleMap.clear();
+
                 if (response.body() != null) {
                     List<Koordinat> datakoordinat = response.body().getData().getKoordinat();
-                    PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
-                    if (line != null) {
-                        googleMap.clear();
-                    }
+                    if(datakoordinat.size() >0){
+                        PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+                        if (line != null) {
+                            googleMap.clear();
+                        }
 
-                    final int[] index = {1};
-                    datakoordinat.forEach((data) -> {
-                        if (index[0] == 1) {
-                            LatLng point = new LatLng(data.getLatitude(), data.getLongitude());
-                            options.add(point);
-                            googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vehicle_location)).position(point).title("Your Vehicle"));
-                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                                    .target(point)
-                                    .bearing(5)
-                                    .tilt(45)
-                                    .zoom(14)
-                                    .build()));
-                            line = googleMap.addPolyline(options);
-
-                        } else {
-                            new Handler().postDelayed(() -> {
+                        final int[] index = {1};
+                        datakoordinat.forEach((data) -> {
+                            if (index[0] == 1) {
                                 LatLng point = new LatLng(data.getLatitude(), data.getLongitude());
                                 options.add(point);
                                 googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vehicle_location)).position(point).title("Your Vehicle"));
@@ -137,16 +148,34 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
                                         .zoom(14)
                                         .build()));
                                 line = googleMap.addPolyline(options);
-                            }, 500 * index[0]);
-                        }
-                        index[0]++;
-                    });
+
+                            } else {
+                                new Handler().postDelayed(() -> {
+                                    LatLng point = new LatLng(data.getLatitude(), data.getLongitude());
+                                    options.add(point);
+                                    googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vehicle_location)).position(point).title("Your Vehicle"));
+                                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                                            .target(point)
+                                            .bearing(5)
+                                            .tilt(45)
+                                            .zoom(14)
+                                            .build()));
+                                    line = googleMap.addPolyline(options);
+                                }, 500 * index[0]);
+                            }
+                            index[0]++;
+                        });
+                    }else {
+                        Toast.makeText(getActivity(), "Sorry you dont have track data..", Toast.LENGTH_SHORT).show();
+                    }
                 }
+                progressbar.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
-
+                Toast.makeText(getActivity(), "Failed to get data..", Toast.LENGTH_SHORT).show();
+                progressbar.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -163,7 +192,7 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
-                        inputDate.setHint(String.valueOf(dayOfMonth)+"/"+String.valueOf(dayOfMonth)+"/"+String.valueOf(year));
+                        inputDate.setHint(String.valueOf(dayOfMonth)+"/"+String.valueOf(monthOfYear+1)+"/"+String.valueOf(year));
                     }
                 }, tahun, bulan, hari);
         datePickerDialog.show();
@@ -171,10 +200,10 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
 
     @OnClick(R.id.search)
     public void searchDataPeriode(){
-        String periode = inputDate.getHint().toString();
-        Toast.makeText(getActivity(), periode, Toast.LENGTH_SHORT).show();
-
-
+        progressbar.setVisibility(View.VISIBLE);
+        String tanggal[]= inputDate.getHint().toString().split("/");
+        String periode  = tanggal[2]+"/"+tanggal[1]+"/"+tanggal[0];
+        settupGpsData(periode);
     }
 
     @Override
