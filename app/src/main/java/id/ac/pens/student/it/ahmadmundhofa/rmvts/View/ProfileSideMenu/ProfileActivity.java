@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
@@ -71,6 +72,11 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationOnClickListener(arrow -> onBackPressed());
+    }
+
+    @OnClick(R.id.foto_profile)
+    public void openCameraAndTakePicture(){
+        //TODO: open camera and upload picture
     }
 
     @Override

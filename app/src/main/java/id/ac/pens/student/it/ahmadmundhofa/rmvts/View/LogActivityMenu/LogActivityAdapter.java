@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -27,8 +28,20 @@ public class LogActivityAdapter extends RecyclerView.Adapter<LogActivityAdapter.
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         LogActivity logActivity = logActivityList.get(position);
-        holder.title.setText(logActivity.getTitle());
-        holder.detail.setText(logActivity.getDetail());
+        String title_text = logActivity.getTitle();
+        String detail_text= logActivity.getDetail();
+        holder.title.setText(title_text);
+        holder.detail.setText(detail_text);
+
+        if(title_text.equals("gps status")){
+            holder.imageSymbol.setImageResource(R.drawable.ic_log_map);
+        }else if(title_text.equals("vibration")){
+            holder.imageSymbol.setImageResource(R.drawable.ic_vibration_orange);
+        }else if(title_text.equals("ignition")){
+            holder.imageSymbol.setImageResource(R.drawable.ic_ignition);
+        }else if(title_text.equals("buzzer")){
+            holder.imageSymbol.setImageResource(R.drawable.ic_alarm);
+        }
     }
 
     @Override
@@ -38,11 +51,13 @@ public class LogActivityAdapter extends RecyclerView.Adapter<LogActivityAdapter.
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, detail;
+        public ImageView imageSymbol;
 
         public MyViewHolder(View view) {
             super(view);
             title  = (TextView) view.findViewById(R.id.title);
             detail = (TextView) view.findViewById(R.id.detail);
+            imageSymbol = (ImageView) view.findViewById(R.id.image_symbol);
         }
     }
 

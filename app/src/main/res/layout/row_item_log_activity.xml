@@ -6,6 +6,7 @@
     android:paddingEnd="@dimen/activity_margin"
     android:paddingTop="@dimen/default_margin"
     android:paddingBottom="@dimen/default_margin"
+    android:background="@drawable/box_input_white_register"
     android:layout_height="wrap_content">
 
     <LinearLayout
@@ -29,8 +30,8 @@
 
     <ImageView
         android:id="@+id/image_symbol"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:src="@drawable/background_box_orange"
         android:layout_alignParentEnd="true"/>
 </RelativeLayout>
