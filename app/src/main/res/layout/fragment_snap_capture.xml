@@ -14,9 +14,9 @@
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/background_box_white"
-        android:paddingBottom="@dimen/activity_margin"
-        android:paddingTop="@dimen/activity_margin"/>
+        android:scaleType="centerCrop"
+        android:padding="15dp"
+        android:background="@drawable/background_box_white"/>
 
     <TextView
         android:id="@+id/keterangan"

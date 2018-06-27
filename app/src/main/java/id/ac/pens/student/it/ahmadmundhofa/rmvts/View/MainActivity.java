@@ -45,30 +45,24 @@ import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.SnapCaptureMenu.SnapCaptur
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.TrackVehicleMenu.TrackVehicleFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
+    public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
     private static final String TAG = MainActivity.class.getSimpleName();
-
     @BindView(R.id.root_layout)
     CoordinatorLayout rootLayout;
-
     @BindView(R.id.navigation)
     BottomNavigationView navigation;
-
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
-
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawer;
-
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-
     private TextView headerOwner, headerEmail;
     private ImageView fotoProfile;
     private Fragment fragment;
     private boolean twice = false;
     private BottomSheetBehavior sheetBehavior;
-    public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
-    public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
     private String URL_HOST = "https://rmvts.herokuapp.com/";
     private Socket mSocket;
     private int revealX;
@@ -120,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showHeader() {
-        String nama  = dataSession.get(SessionManager.owner);
+        String nama = dataSession.get(SessionManager.owner);
         String email = dataSession.get(SessionManager.email);
         String imgageUrl = dataSession.get(SessionManager.foto_profile);
 
@@ -285,9 +279,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         twice = false;
                     }
                 }, 3000);
-                navigation.setSelectedItemId(R.id.dashboard);
             } else {
-                super.onBackPressed();
+                navigation.setSelectedItemId(R.id.dashboard);
             }
         }
     }

@@ -67,5 +67,6 @@
     <string name="detail_not_found">Detail location not found</string>
     <string name="take_snap_shot">Take Snap Shot</string>
     <string name="getting_data">Getting data image..</string>
+    <string name="upload">Upload</string>
 
 </resources>

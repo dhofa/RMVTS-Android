@@ -1,7 +1,6 @@
 package id.ac.pens.student.it.ahmadmundhofa.rmvts.View.SnapCaptureMenu;
 
 
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -69,23 +68,18 @@ public class SnapCaptureFragment extends Fragment {
     private Emitter.Listener snapCaptureEmitter = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String msg;
-                    try {
-                        msg = data.getString("msg");
-                    } catch (JSONException e) {
-                        return;
-                    }
-                    Log.e("Message response  =>", msg);
-                    if (msg.equals("true")) {
-                        //TODO: Get Api contain last image captured
-                        settupDashboardData();
-                    }
-                }
-            });
+            JSONObject data = (JSONObject) args[0];
+            String msg;
+            try {
+                msg = data.getString("msg");
+            } catch (JSONException e) {
+                return;
+            }
+            Log.e("Message response  =>", msg);
+            if (msg.equals("true")) {
+                //TODO: Get Api contain last image captured
+                settupDashboardData();
+            }
         }
     };
 
@@ -129,37 +123,48 @@ public class SnapCaptureFragment extends Fragment {
         progressbar.setVisibility(View.VISIBLE);
     }
 
+    @OnClick(R.id.image_capture)
     public void settupDashboardData() {
-        sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
-        dataSession = sessionManager.getUserDetails();
-        token = dataSession.get(SessionManager.token);
-        keterangan.setText(getResources().getString(R.string.getting_data));
+        if (isAdded()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-        ApiModels apiService = ApiService.getHttp().create(ApiModels.class);
-        Call<ResponseModel> call = apiService.getDashboard(token);
-        call.enqueue(new Callback<ResponseModel>() {
-            @Override
-            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                if (response.body().getStatus().equals("success")) {
-                    DataResponse dataResponse = response.body().getData();
-                    if (dataResponse != null) {
-                        //TODO: Get URL last image and set into image view
-                        String imgageUrl = dataResponse.getVehicleData().getLastDriverPhotos();
-                        Picasso.get().load(imgageUrl).into(imageCapture);
-                        keterangan.setText(getResources().getString(R.string.press_button_to_take_the_picture_from_your_iot_device));
-                    }
-                } else {
-                    Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
+                    dataSession = sessionManager.getUserDetails();
+                    token = dataSession.get(SessionManager.token);
+                    keterangan.setText(getResources().getString(R.string.getting_data));
+
+                    ApiModels apiService = ApiService.getHttp().create(ApiModels.class);
+                    Call<ResponseModel> call = apiService.getDashboard(token);
+                    call.enqueue(new Callback<ResponseModel>() {
+                        @Override
+                        public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                            if (response.body().getStatus().equals("success")) {
+                                DataResponse dataResponse = response.body().getData();
+                                if (dataResponse != null) {
+                                    //TODO: Get URL last image and set into image view
+                                    String imgageUrl = dataResponse.getVehicleData().getLastDriverPhotos();
+                                    Picasso.get().load(imgageUrl).into(imageCapture);
+                                    keterangan.setText(getResources().getString(R.string.press_button_to_take_the_picture_from_your_iot_device));
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                            progressbar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseModel> call, Throwable t) {
+                            Toast.makeText(getActivity(), "Fail to get data..", Toast.LENGTH_SHORT).show();
+                            progressbar.setVisibility(View.GONE);
+                        }
+                    });
+
                 }
-                progressbar.setVisibility(View.GONE);
-            }
+            });
+        }
 
-            @Override
-            public void onFailure(Call<ResponseModel> call, Throwable t) {
-                Toast.makeText(getActivity(), "Fail to get data..", Toast.LENGTH_SHORT).show();
-                progressbar.setVisibility(View.GONE);
-            }
-        });
     }
 
     @Override

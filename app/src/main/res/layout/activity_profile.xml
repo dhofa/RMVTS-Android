@@ -169,4 +169,17 @@
         android:layout_centerHorizontal="true"
         app:civ_border_color="#fff"
         app:civ_border_width="2dp"/>
+
+    <TextView
+        android:id="@+id/btn_upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/upload"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/foto_profile"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
+        android:textColor="#FFF"
+        android:padding="5dp"
+        android:background="@drawable/background_box_green"/>
 </RelativeLayout>
