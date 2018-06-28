@@ -37,9 +37,9 @@ public class LogActivityAdapter extends RecyclerView.Adapter<LogActivityAdapter.
             holder.imageSymbol.setImageResource(R.drawable.ic_log_map);
         }else if(title_text.equals("vibration")){
             holder.imageSymbol.setImageResource(R.drawable.ic_vibration_orange);
-        }else if(title_text.equals("ignition")){
+        }else if(title_text.equals("Ignition Notification")){
             holder.imageSymbol.setImageResource(R.drawable.ic_ignition);
-        }else if(title_text.equals("buzzer")){
+        }else if(title_text.equals("Buzzer Notification")){
             holder.imageSymbol.setImageResource(R.drawable.ic_alarm);
         }
     }

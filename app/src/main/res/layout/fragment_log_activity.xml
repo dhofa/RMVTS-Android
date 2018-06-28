@@ -12,6 +12,10 @@
         android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycle_layout"
+            android:paddingLeft="@dimen/activity_margin"
+            android:paddingStart="@dimen/activity_margin"
+            android:paddingRight="@dimen/activity_margin"
+            android:paddingEnd="@dimen/activity_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
