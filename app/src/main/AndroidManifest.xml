@@ -3,6 +3,7 @@
     package="id.ac.pens.student.it.ahmadmundhofa.rmvts">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -16,9 +17,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <service
+            android:name=".Utils.MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".Utils.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity
             android:name=".View.SplashScreenActivity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:theme="@style/NoActionbarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,10 +49,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
 
         <activity
             android:name=".View.MapsMenu.MapsActivity"
@@ -54,7 +73,9 @@
         <activity
             android:name=".View.RegisterMenu.RegisterActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".View.ProfileSideMenu.CameraActivity"></activity>
+        <activity
+            android:name=".View.ProfileSideMenu.CameraActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
