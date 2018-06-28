@@ -45,7 +45,6 @@ import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.DataResponse;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.ResponseModel;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
-import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.MainActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RemoteMenu.RemoteActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,7 +72,7 @@ public class DashboardFragment extends Fragment {
     @BindView(R.id.progressbar)
     ProgressBar progressbar;
 
-    private Unbinder unbinder = null;
+    private Unbinder unbinder;
     private String token;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
@@ -122,8 +121,7 @@ public class DashboardFragment extends Fragment {
 
     private void settupDashboardData() {
         mainContent.setAlpha(0.0f);
-        progressbar.setVisibility(View.VISIBLE);
-
+        showProgress();
         sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
         dataSession = sessionManager.getUserDetails();
         token = dataSession.get(SessionManager.token);
@@ -133,27 +131,27 @@ public class DashboardFragment extends Fragment {
         call.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                if(getActivity() != null && isAdded()){
-                    if(response.body().getStatus().equals("success")){
+                if (getActivity() != null && isAdded()) {
+                    if (response.body().getStatus().equals("success")) {
                         DataResponse dataResponse = response.body().getData();
-                        if(dataResponse!=null){
+                        if (dataResponse != null) {
                             settupDataRelay(dataResponse);
-                            if(dataResponse.getVehicleData().getLastLatitude() == 0 && dataResponse.getVehicleData().getLastLongitude() == 0){
+                            if (dataResponse.getVehicleData().getLastLatitude() == 0 && dataResponse.getVehicleData().getLastLongitude() == 0) {
                                 titleAlamat.setText(getResources().getString(R.string.not_found));
                                 detailAlamat.setText(getResources().getString(R.string.detail_not_found));
                                 Toast.makeText(getActivity(), "Anda belum memiliki data lokasi terakhir..", Toast.LENGTH_SHORT).show();
                                 mainContent.animate().alpha(1.0f).setDuration(1000);
-                                progressbar.setVisibility(View.INVISIBLE);
-                            }else{
+                                dismissProgress();
+                            } else {
                                 LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
-                                sessionManager.updateLocation(String.valueOf(lokasi.latitude),String.valueOf(lokasi.longitude));
+                                sessionManager.updateLocation(String.valueOf(lokasi.latitude), String.valueOf(lokasi.longitude));
                                 locationVehicle(lokasi);
                             }
 
                             String url_foto = dataResponse.getVehicleData().getUserPhotos();
                             sessionManager.saveFotoProfile(url_foto);
                         }
-                    }else{
+                    } else {
                         Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -161,7 +159,7 @@ public class DashboardFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
-                if(getActivity() != null && isAdded()) {
+                if (getActivity() != null && isAdded()) {
                     Toast.makeText(getActivity(), "Fail to get data..", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -193,21 +191,21 @@ public class DashboardFragment extends Fragment {
         Boolean relay_vibration = dataResponse.getRelay().getVibration();
         Boolean relay_buzzer = dataResponse.getRelay().getBuzzer();
 
-        if(relay_buzzer){
+        if (relay_buzzer) {
             resultAlarmTrue();
-        }else{
+        } else {
             resultAlarmFalse();
         }
 
-        if(relay_vibration){
+        if (relay_vibration) {
             resultParkingEventTrue();
-        }else{
+        } else {
             resultParkingEventFalse();
         }
 
-        if(relay_gps){
+        if (relay_gps) {
             resultGpsTrue();
-        }else{
+        } else {
             resultGpsFalse();
         }
     }
@@ -241,12 +239,12 @@ public class DashboardFragment extends Fragment {
         String[] locationPinned = getLocationNameAndAddress(lokasi);
 
         assert locationPinned != null;
-        if(locationPinned[0] != null && locationPinned[1]!=null){
+        if (locationPinned[0] != null && locationPinned[1] != null) {
             titleAlamat.setText(locationPinned[0]);
             detailAlamat.setText(locationPinned[1]);
         }
         mainContent.animate().alpha(1.0f).setDuration(1000);
-        progressbar.setVisibility(View.INVISIBLE);
+        dismissProgress();
     }
 
     @Nullable
@@ -257,7 +255,7 @@ public class DashboardFragment extends Fragment {
         getActivity().runOnUiThread(() -> {
             try {
                 int MAX_RESULTS = 1;
-                if(posisiLatLong!=null){
+                if (posisiLatLong != null) {
                     List<Address> addresses = geocoder.getFromLocation(posisiLatLong.latitude, posisiLatLong.longitude, MAX_RESULTS);
                     for (int i = 0; i < MAX_RESULTS; i++) {
                         Log.v("List Alamat => ", "ke-" + String.valueOf(i));
@@ -297,7 +295,7 @@ public class DashboardFragment extends Fragment {
     }
 
     @OnClick(R.id.btn_remote)
-    public void btn_remote_clicked(){
+    public void btn_remote_clicked() {
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), btnRemote, "transition");
         int revealX = (int) (btnRemote.getX() + btnRemote.getWidth() / 2);
         int revealY = (int) (btnRemote.getY() + btnRemote.getHeight() / 2);
@@ -307,6 +305,24 @@ public class DashboardFragment extends Fragment {
         intent.putExtra(RemoteActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY);
 
         ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+    }
+
+    public void dismissProgress() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressbar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    public void showProgress() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressbar.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override

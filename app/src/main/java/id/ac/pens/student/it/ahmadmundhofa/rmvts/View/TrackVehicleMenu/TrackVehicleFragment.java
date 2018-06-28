@@ -68,7 +68,7 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
     private String token;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
-    private Unbinder unbinder = null;
+    private Unbinder unbinder;
     private boolean once = true;
     private int hari, bulan, tahun;
 
@@ -104,7 +104,7 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void settupCurentDate() {
-        progressbar.setVisibility(View.VISIBLE);
+        showProgress();
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormatPeriode = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
         SimpleDateFormat dateFormatView = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
@@ -169,13 +169,31 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
                         Toast.makeText(getActivity(), "Sorry you dont have track data..", Toast.LENGTH_SHORT).show();
                     }
                 }
-                progressbar.setVisibility(View.INVISIBLE);
+                dismissProgress();
             }
 
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
                 Toast.makeText(getActivity(), "Failed to get data..", Toast.LENGTH_SHORT).show();
+                dismissProgress();
+            }
+        });
+    }
+
+    public void dismissProgress() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
                 progressbar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    public void showProgress() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressbar.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -200,7 +218,7 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
 
     @OnClick(R.id.search)
     public void searchDataPeriode(){
-        progressbar.setVisibility(View.VISIBLE);
+        showProgress();
         String tanggal[]= inputDate.getHint().toString().split("/");
         String periode  = tanggal[2]+"/"+tanggal[1]+"/"+tanggal[0];
         settupGpsData(periode);

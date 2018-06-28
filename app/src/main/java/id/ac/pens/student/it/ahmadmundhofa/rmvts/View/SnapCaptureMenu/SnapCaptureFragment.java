@@ -59,7 +59,7 @@ public class SnapCaptureFragment extends Fragment {
     @BindView(R.id.keterangan)
     TextView keterangan;
 
-    private Unbinder unbinder = null;
+    private Unbinder unbinder;
     private String token;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
@@ -120,7 +120,7 @@ public class SnapCaptureFragment extends Fragment {
         }
 
         mSocket.emit("ambilfoto", content);
-        progressbar.setVisibility(View.VISIBLE);
+        showProgress();
     }
 
     @OnClick(R.id.image_capture)
@@ -151,20 +151,37 @@ public class SnapCaptureFragment extends Fragment {
                             } else {
                                 Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             }
-                            progressbar.setVisibility(View.GONE);
+                            dismissProgress();
                         }
 
                         @Override
                         public void onFailure(Call<ResponseModel> call, Throwable t) {
                             Toast.makeText(getActivity(), "Fail to get data..", Toast.LENGTH_SHORT).show();
-                            progressbar.setVisibility(View.GONE);
+                            dismissProgress();
                         }
                     });
 
                 }
             });
         }
+    }
 
+    public void dismissProgress() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressbar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    public void showProgress() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressbar.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override

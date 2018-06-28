@@ -229,7 +229,7 @@ public class ProfileActivity extends AppCompatActivity {
         if(fotoFile != null){
             Log.v("lokasi foto => ",fotoFile.toString());
 //            RequestBody reqFile = RequestBody.create(MediaType.parse("multipart/form-file"), fotoFile);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("file_foto", fotoFile.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), fotoFile));
+            MultipartBody.Part body = MultipartBody.Part.createFormData("file_foto", fotoFile.getName(), RequestBody.create(MediaType.parse("image/jpeg"), fotoFile));
 
 
             ApiModels apiService = ApiService.getHttp().create(ApiModels.class);

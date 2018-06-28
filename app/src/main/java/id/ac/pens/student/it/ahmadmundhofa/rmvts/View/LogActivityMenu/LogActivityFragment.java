@@ -12,13 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -47,10 +50,13 @@ public class LogActivityFragment extends Fragment {
     @BindView(R.id.input_date)
     TextView inputDate;
 
+    @BindView(R.id.progressbar)
+    ProgressBar progressbar;
+
     private List<LogActivity> logActivityList = new ArrayList<>();
     private LogActivityAdapter logActivityAdapter;
     private int hari, bulan, tahun;
-    private Unbinder unbinder = null;
+    private Unbinder unbinder;
     private String token, periode;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
@@ -64,11 +70,21 @@ public class LogActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_log_activity, container, false);
         unbinder = ButterKnife.bind(this, view);
-        periode = "2018/06/13";
-        getDataLogActivity(periode);
+        settupCurentDate();
         return view;
     }
 
+    private void settupCurentDate() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormatPeriode = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+        SimpleDateFormat dateFormatView = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        String periode = dateFormatPeriode.format(calendar.getTime());
+        String dateView= dateFormatView.format(calendar.getTime());
+        inputDate.setHint(dateView);
+        //periode = "2018/06/13";
+        progressbar.setVisibility(View.VISIBLE);
+        getDataLogActivity(periode);
+    }
 
     public void getDataLogActivity(String periode) {
         sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
@@ -88,11 +104,13 @@ public class LogActivityFragment extends Fragment {
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
                 recyclerView.setAdapter(logActivityAdapter);
                 logActivityAdapter.notifyDataSetChanged();
+                dismissProgress();
             }
 
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
                 Log.v("Erorr =>", t.getMessage());
+                dismissProgress();
             }
         });
     }
@@ -109,7 +127,7 @@ public class LogActivityFragment extends Fragment {
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
-                        inputDate.setHint(String.valueOf(dayOfMonth)+"/"+String.valueOf(monthOfYear)+"/"+String.valueOf(year));
+                        inputDate.setHint(String.valueOf(dayOfMonth)+"/"+String.valueOf(monthOfYear+1)+"/"+String.valueOf(year));
                     }
                 }, tahun, bulan, hari);
         datePickerDialog.show();
@@ -117,10 +135,16 @@ public class LogActivityFragment extends Fragment {
 
     @OnClick(R.id.search)
     public void searchDataPeriode(){
+        progressbar.setVisibility(View.VISIBLE);
         String tanggal[]= inputDate.getHint().toString().split("/");
         String periode  = tanggal[2]+"/"+tanggal[1]+"/"+tanggal[0];
-        Toast.makeText(getActivity(), periode, Toast.LENGTH_SHORT).show();
+        getDataLogActivity(periode);
+    }
 
+    public void dismissProgress(){
+        if(progressbar.getVisibility()==View.VISIBLE){
+            progressbar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
