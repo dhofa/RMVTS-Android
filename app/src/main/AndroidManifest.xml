@@ -17,20 +17,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <service
             android:name=".Utils.MyFirebaseMessagingService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <service
-            android:name=".Utils.MyFirebaseInstanceIDService">
+        <service android:name=".Utils.MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
@@ -40,8 +37,8 @@
 
         <activity
             android:name=".View.SplashScreenActivity"
-            android:screenOrientation="portrait"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@style/NoActionbarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,7 +46,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".View.LoginMenu.LoginActivity"
             android:screenOrientation="portrait"
@@ -72,6 +68,11 @@
         <activity
             android:name=".View.ProfileSideMenu.CameraActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".View.LogCamera.LogCameraActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".View.LogCamera.ViewImageActivity"></activity>
     </application>
 
 </manifest>

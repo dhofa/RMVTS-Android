@@ -52,7 +52,6 @@
     <string name="bottom_log">Log Activity</string>
     <string name="log_vibration">Log Vibration</string>
     <string name="log_ignition">Log Ignition</string>
-    <string name="log_camera">Log Camera</string>
     <string name="profile">Profile</string>
     <string name="need_gps">Access GPS Required</string>
     <string name="dashboard">Dashboard</string>
@@ -68,5 +67,7 @@
     <string name="take_snap_shot">Take Snap Shot</string>
     <string name="getting_data">Getting data image..</string>
     <string name="upload">Upload</string>
+    <string name="log_camera">Log Camera</string>
+    <string name="detail_image">Detail Image</string>
 
 </resources>

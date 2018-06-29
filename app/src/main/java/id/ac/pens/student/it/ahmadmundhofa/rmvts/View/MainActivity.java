@@ -38,6 +38,7 @@ import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.Dashboard.DashboardFragment;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LogActivityMenu.LogActivityFragment;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LogCamera.LogCameraActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LoginMenu.LoginActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.ProfileSideMenu.ProfileActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RealtimeMapsMenu.RealtimeMapsFragment;
@@ -133,7 +134,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.side_log_ignition) {
 
         } else if (id == R.id.side_log_camera) {
-
+            goTo = new Intent(MainActivity.this, LogCameraActivity.class);
+            startActivity(goTo);
         } else if (id == R.id.side_log_vibration) {
 
         } else if (id == R.id.side_logout) {

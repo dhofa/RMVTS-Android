@@ -1,4 +1,4 @@
-package id.ac.pens.student.it.ahmadmundhofa.rmvts.Models;
+package id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

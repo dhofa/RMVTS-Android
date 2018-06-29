@@ -1,4 +1,4 @@
-package id.ac.pens.student.it.ahmadmundhofa.rmvts.Models;
+package id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -23,7 +23,7 @@ public class DataResponse {
     private List<Koordinat> koordinat = null;
     @SerializedName("driver")
     @Expose
-    private List<Object> driver = null;
+    private List<Driver> driver = null;
     @SerializedName("vibration")
     @Expose
     private List<Vibration> vibration = null;
@@ -89,11 +89,11 @@ public class DataResponse {
         this.koordinat = koordinat;
     }
 
-    public List<Object> getDriver() {
+    public List<Driver> getDriver() {
         return driver;
     }
 
-    public void setDriver(List<Object> driver) {
+    public void setDriver(List<Driver> driver) {
         this.driver = driver;
     }
 

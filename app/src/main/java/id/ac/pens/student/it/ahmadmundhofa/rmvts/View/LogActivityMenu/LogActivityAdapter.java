@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.LogActivity;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.response.LogActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 
 public class LogActivityAdapter extends RecyclerView.Adapter<LogActivityAdapter.MyViewHolder> {

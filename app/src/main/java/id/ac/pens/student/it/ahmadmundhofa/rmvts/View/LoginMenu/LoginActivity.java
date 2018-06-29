@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -34,8 +33,8 @@ import butterknife.OnClick;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiModels;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiService;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.MainActivity;
-import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.DataResponse;
-import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.ResponseModel;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.response.DataResponse;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.response.ResponseModel;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RegisterMenu.RegisterActivity;

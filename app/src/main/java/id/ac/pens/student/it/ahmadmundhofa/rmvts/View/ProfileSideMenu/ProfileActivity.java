@@ -7,11 +7,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -34,7 +31,7 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiModels;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiService;
-import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.ResponseModel;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.response.ResponseModel;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
 import okhttp3.MediaType;
@@ -85,11 +82,14 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         ButterKnife.bind(this);
+        settupDataSession();
+        settupProfile();
+    }
 
+    private void settupDataSession() {
         sessionManager = new SessionManager(this);
         dataSession = sessionManager.getUserDetails();
         token = dataSession.get(SessionManager.token);
-        settupProfile();
     }
 
     private void settupProfile() {
@@ -153,15 +153,9 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(pictureActionIntent, GALLERY_PICTURE);
     }
 
-
     private void openCamera() {
-//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        File f = new File(android.os.Environment.getExternalStorageDirectory(), "profile.jpg");
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-//        startActivityForResult(intent, CAMERA_REQUEST);
         Intent intent = new Intent(ProfileActivity.this, CameraActivity.class);
         startActivityForResult(intent, CAMERA_REQUEST);
-
     }
 
     private boolean isReadStorageAllowed() {
@@ -225,13 +219,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_upload)
     public void updateFotoProfile(){
-        //TODO: upload api url foto profile
         if(fotoFile != null){
             Log.v("lokasi foto => ",fotoFile.toString());
-//            RequestBody reqFile = RequestBody.create(MediaType.parse("multipart/form-file"), fotoFile);
             MultipartBody.Part body = MultipartBody.Part.createFormData("file_foto", fotoFile.getName(), RequestBody.create(MediaType.parse("image/jpeg"), fotoFile));
-
-
             ApiModels apiService = ApiService.getHttp().create(ApiModels.class);
             Call<ResponseModel> call = apiService.updateFotoProfile(token, body);
             call.enqueue(new Callback<ResponseModel>() {
@@ -245,7 +235,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ResponseModel> call, Throwable t) {
-
+                    Toast.makeText(ProfileActivity.this, "Failed to upload images..", Toast.LENGTH_SHORT).show();
                 }
             });
         }
