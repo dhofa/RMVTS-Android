@@ -72,7 +72,9 @@
             android:name=".View.LogCamera.LogCameraActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".View.LogCamera.ViewImageActivity"></activity>
+        <activity android:name=".View.LogCamera.ViewImageActivity" />
+        <activity android:name=".View.LogVibration.LogVibrationActivity" />
+        <activity android:name=".View.LogIgnition.LogIgnitionActivity"></activity>
     </application>
 
 </manifest>

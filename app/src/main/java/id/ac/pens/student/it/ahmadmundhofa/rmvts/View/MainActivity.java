@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -26,12 +25,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.github.nkzawa.socketio.client.Socket;
 import com.squareup.picasso.Picasso;
-
 import java.util.HashMap;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
@@ -39,6 +34,8 @@ import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.Dashboard.DashboardFragment;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LogActivityMenu.LogActivityFragment;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LogCamera.LogCameraActivity;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LogIgnition.LogIgnitionActivity;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LogVibration.LogVibrationActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.LoginMenu.LoginActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.ProfileSideMenu.ProfileActivity;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RealtimeMapsMenu.RealtimeMapsFragment;
@@ -46,9 +43,7 @@ import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.SnapCaptureMenu.SnapCaptur
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.TrackVehicleMenu.TrackVehicleFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
-    public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
-    private static final String TAG = MainActivity.class.getSimpleName();
+
     @BindView(R.id.root_layout)
     CoordinatorLayout rootLayout;
     @BindView(R.id.navigation)
@@ -59,18 +54,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout mDrawer;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+
     private TextView headerOwner, headerEmail;
     private ImageView fotoProfile;
     private Fragment fragment;
     private boolean twice = false;
-    private BottomSheetBehavior sheetBehavior;
-    private String URL_HOST = "https://rmvts.herokuapp.com/";
-    private Socket mSocket;
     private int revealX;
     private int revealY;
     private ActionBarDrawerToggle toggle;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
+    public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,12 +128,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             goTo = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(goTo);
         } else if (id == R.id.side_log_ignition) {
-
+            goTo = new Intent(MainActivity.this, LogIgnitionActivity.class);
+            startActivity(goTo);
         } else if (id == R.id.side_log_camera) {
             goTo = new Intent(MainActivity.this, LogCameraActivity.class);
             startActivity(goTo);
         } else if (id == R.id.side_log_vibration) {
-
+            goTo = new Intent(MainActivity.this, LogVibrationActivity.class);
+            startActivity(goTo);
         } else if (id == R.id.side_logout) {
             gotoLogout();
         }

@@ -226,7 +226,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
                 if (Objects.requireNonNull(response.body()).getStatus().equals("success")) {
                     DataResponse dataResponse = response.body().getData();
                     if (dataResponse != null) {
-                        if(dataResponse.getVehicleData().getLastLatitude() == 0 && dataResponse.getVehicleData().getLastLongitude() ==0){
+                        if(dataResponse.getVehicleData().getLastLocation().getLastLatitude() == 0 && dataResponse.getVehicleData().getLastLocation().getLastLongitude() ==0){
                             vehicle_last_location = new LatLng(0,0);
                             Toast.makeText(getActivity(), "Anda belum memiliki data lokasi terakhir..", Toast.LENGTH_SHORT).show();
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
@@ -236,7 +236,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
                                     .zoom(14)
                                     .build()));
                         }else{
-                            vehicle_last_location = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
+                            vehicle_last_location = new LatLng(dataResponse.getVehicleData().getLastLocation().getLastLatitude(), dataResponse.getVehicleData().getLastLocation().getLastLongitude());
                             sessionManager.updateLocation(String.valueOf(vehicle_last_location.latitude), String.valueOf(vehicle_last_location.longitude));
                             marker_vehicle = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vehicle_location)).position(vehicle_last_location).title("Your Vehicle"));
 

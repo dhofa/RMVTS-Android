@@ -144,7 +144,7 @@ public class SnapCaptureFragment extends Fragment {
                                 DataResponse dataResponse = response.body().getData();
                                 if (dataResponse != null) {
                                     //TODO: Get URL last image and set into image view
-                                    String imgageUrl = dataResponse.getVehicleData().getLastDriverPhotos();
+                                    String imgageUrl = dataResponse.getVehicleData().getLastImageCapture().getLastDriverPhotos();
                                     Picasso.get().load(imgageUrl).into(imageCapture);
                                     keterangan.setText(getResources().getString(R.string.press_button_to_take_the_picture_from_your_iot_device));
                                 }

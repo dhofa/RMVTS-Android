@@ -36,8 +36,8 @@ public class LogCameraActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
     private List<Driver> list = new ArrayList<>();
-    LogCameraAdapter adapter;
-    RecyclerView.LayoutManager layoutManager;
+    private LogCameraAdapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

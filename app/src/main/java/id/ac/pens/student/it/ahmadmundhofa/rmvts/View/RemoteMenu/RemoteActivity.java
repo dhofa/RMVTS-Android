@@ -63,7 +63,7 @@ import retrofit2.Response;
 public class RemoteActivity extends AppCompatActivity {
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
-    private String URL_HOST = "https://rmvts.herokuapp.com/";
+    private String URL_HOST = "https://rmvts.jagopesan.com/";
     private Socket mSocket;
     private int revealX;
     private int revealY;
@@ -129,7 +129,7 @@ public class RemoteActivity extends AppCompatActivity {
                     DataResponse dataResponse = response.body().getData();
                     if(dataResponse!=null){
                         settupDataRelay(dataResponse);
-                        LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLatitude(), dataResponse.getVehicleData().getLastLongitude());
+                        LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLocation().getLastLatitude(), dataResponse.getVehicleData().getLastLocation().getLastLongitude());
                         locationVehicle(lokasi);
                     }
                 }else{
