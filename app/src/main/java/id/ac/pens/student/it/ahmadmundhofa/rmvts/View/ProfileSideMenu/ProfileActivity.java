@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +67,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     @BindView(R.id.btn_upload)
     TextView btnUpload;
+
+    @BindView(R.id.progressbar)
+    ProgressBar progressbar;
 
     private Bitmap bitmap;
     private String selectedImagePath, token;
@@ -145,7 +149,23 @@ public class ProfileActivity extends AppCompatActivity {
         myAlertDialog.show();
     }
 
+    public void dismissProgress() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressbar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
 
+    public void showProgress() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressbar.setVisibility(View.VISIBLE);
+            }
+        });
+    }
 
     private void openGallery() {
         Intent pictureActionIntent = null;
@@ -220,6 +240,7 @@ public class ProfileActivity extends AppCompatActivity {
     @OnClick(R.id.btn_upload)
     public void updateFotoProfile(){
         if(fotoFile != null){
+            showProgress();
             Log.v("lokasi foto => ",fotoFile.toString());
             MultipartBody.Part body = MultipartBody.Part.createFormData("file_foto", fotoFile.getName(), RequestBody.create(MediaType.parse("image/jpeg"), fotoFile));
             ApiModels apiService = ApiService.getHttp().create(ApiModels.class);
@@ -231,10 +252,12 @@ public class ProfileActivity extends AppCompatActivity {
                         settupProfile();
                         btnUpload.setVisibility(View.INVISIBLE);
                     }
+                    dismissProgress();
                 }
 
                 @Override
                 public void onFailure(Call<ResponseModel> call, Throwable t) {
+                    dismissProgress();
                     Toast.makeText(ProfileActivity.this, "Failed to upload images..", Toast.LENGTH_SHORT).show();
                 }
             });

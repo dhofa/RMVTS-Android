@@ -63,7 +63,7 @@ public class SnapCaptureFragment extends Fragment {
     private String token;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
-    private String URL_HOST = "https://rmvts.herokuapp.com/";
+    private String URL_HOST = "https://rmvts.jagopesan.com/";
     private Socket mSocket;
     private Emitter.Listener snapCaptureEmitter = new Emitter.Listener() {
         @Override
