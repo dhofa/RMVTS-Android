@@ -46,6 +46,7 @@ import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.response.ResponseModel;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RemoteMenu.RemoteActivity;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.ValidationMenu.ValidationActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -300,9 +301,9 @@ public class DashboardFragment extends Fragment {
         int revealX = (int) (btnRemote.getX() + btnRemote.getWidth() / 2);
         int revealY = (int) (btnRemote.getY() + btnRemote.getHeight() / 2);
 
-        Intent intent = new Intent(getActivity(), RemoteActivity.class);
-        intent.putExtra(RemoteActivity.EXTRA_CIRCULAR_REVEAL_X, revealX);
-        intent.putExtra(RemoteActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY);
+        Intent intent = new Intent(getActivity(), ValidationActivity.class);
+        intent.putExtra(ValidationActivity.EXTRA_CIRCULAR_REVEAL_X, revealX);
+        intent.putExtra(ValidationActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY);
 
         ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
     }

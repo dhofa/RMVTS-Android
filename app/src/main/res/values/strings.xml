@@ -69,5 +69,8 @@
     <string name="upload">Upload</string>
     <string name="log_camera">Log Camera</string>
     <string name="detail_image">Detail Image</string>
+    <string name="authentication">Authentication</string>
+    <string name="please_place_your_fingertip_on_the_scanner_to_verify_your_identity">Please place your fingertip on the scanner to verify your identity</string>
+    <string name="you_need_to_take_authentication_before_enter_the_remote_menu_this_is_needed_for_security_reasons">You need to take authentication before enter the remote menu, this is needed for security reasons..</string>
 
 </resources>
