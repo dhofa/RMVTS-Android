@@ -77,7 +77,7 @@ public class ValidationActivity extends AppCompatActivity {
     private static final String KEY_NAME = "RMVTS";
     private Cipher cipher;
 
-    private String token;
+    private String str_password;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
 
@@ -95,7 +95,7 @@ public class ValidationActivity extends AppCompatActivity {
     private void settupSessionManager() {
         sessionManager = new SessionManager(Objects.requireNonNull(this));
         dataSession = sessionManager.getUserDetails();
-        token = dataSession.get(SessionManager.token);
+        str_password = dataSession.get(SessionManager.password);
     }
 
     @OnClick(R.id.use_password)
@@ -108,7 +108,7 @@ public class ValidationActivity extends AppCompatActivity {
     @OnClick(R.id.submit)
     public void submitValidation(){
         String password = inputPassword.getText().toString();
-        if(password.equals("1234")){
+        if(password.equals(str_password)){
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, submit, "transition");
             int revealX = (int) (submit.getX() + submit.getWidth() / 2);
             int revealY = (int) (submit.getY() + submit.getHeight() / 2);

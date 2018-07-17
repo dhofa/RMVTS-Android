@@ -162,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(response.body() != null){
                     if(response.body().getStatus().equals("success")){
                         DataResponse data = response.body().getData();
-                        saveDataUser(data);
+                        saveDataUser(data,str_password);
                         goToMain(view);
                     }else{
                         revertButtonAnimation(response.body().getMessage());
@@ -195,7 +195,7 @@ public class LoginActivity extends AppCompatActivity {
         ActivityCompat.startActivity(this, intent, options.toBundle());
     }
 
-    private void saveDataUser(DataResponse data) {
+    private void saveDataUser(DataResponse data, String password) {
         String owner  = data.getVehicleData().getOwner();
         String plat   = data.getVehicleData().getPlateNumber();
         String address= data.getVehicleData().getAddress();
@@ -206,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
         String str_email= data.getUser().getEmail();
         String fcm_token= data.getUser().getFcmToken();
         sessionManager.saveFotoProfile(url_foto);
-        sessionManager.saveUserData(owner,str_email, fcm_token, plat, address, type, id_user);
+        sessionManager.saveUserData(owner,str_email, fcm_token, plat, address, type, id_user, password);
         sessionManager.createSession(token);
     }
 

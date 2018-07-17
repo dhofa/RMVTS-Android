@@ -20,6 +20,7 @@ public class SessionManager {
     public static final String token = "MyToken";
     public static final String owner = "Owner";
     public static final String email = "Email";
+    public static final String password = "Password";
     public static final String fcm_token = "FcmToken";
     public static final String plate_number = "PlateNumber";
     public static final String foto_profile = "FotoProfile";
@@ -47,7 +48,7 @@ public class SessionManager {
         editor.putString(last_longitude, longitude);
         editor.commit();
     }
-    public void saveUserData(String Owner,String Email,String FCM, String Plat, String Address, String Type, String IdUser){
+    public void saveUserData(String Owner,String Email,String FCM, String Plat, String Address, String Type, String IdUser, String pass){
         editor.putString(owner, Owner);
         editor.putString(email, Email);
         editor.putString(fcm_token, FCM);
@@ -55,6 +56,7 @@ public class SessionManager {
         editor.putString(address, Address);
         editor.putString(vehicle_type, Type);
         editor.putString(id_user, IdUser);
+        editor.putString(password, pass);
         editor.commit();
     }
 
@@ -114,6 +116,7 @@ public class SessionManager {
         user.put(last_latitude, pref.getString(last_latitude, null));
         user.put(last_longitude, pref.getString(last_longitude, null));
         user.put(foto_profile, pref.getString(foto_profile, null));
+        user.put(password, pref.getString(password, null));
         return user;
     }
 }
