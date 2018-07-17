@@ -33,7 +33,20 @@ public class LogVibrationAdapter extends RecyclerView.Adapter<LogVibrationAdapte
         String detail_text= logVibration.getDetail();
         holder.title.setText(title_text);
         holder.detail.setText(detail_text);
-        holder.imageSymbol.setImageResource(R.drawable.ic_vibration_orange);
+
+        if(title_text.equals("gps status")){
+            holder.imageSymbol.setImageResource(R.drawable.ic_log_map);
+        }else if(title_text.equals("vibration")){
+            holder.imageSymbol.setImageResource(R.drawable.ic_vibration_orange);
+        }else if(title_text.equals("Ignition Notification")){
+            holder.imageSymbol.setImageResource(R.drawable.ic_ignition);
+        }else if(title_text.equals("Turn Off Ignition")){
+            holder.imageSymbol.setImageResource(R.drawable.ic_ignition_off);
+        }else if(title_text.equals("Buzzer Notification")){
+            holder.imageSymbol.setImageResource(R.drawable.ic_alarm);
+        }else if(title_text.equals("Buzzer Turned Off")){
+            holder.imageSymbol.setImageResource(R.drawable.ic_alarm_off);
+        }
     }
 
     @Override

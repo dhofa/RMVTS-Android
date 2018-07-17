@@ -76,7 +76,7 @@
         <activity android:name=".View.LogCamera.ViewImageActivity" />
         <activity android:name=".View.LogVibration.LogVibrationActivity" />
         <activity android:name=".View.LogIgnition.LogIgnitionActivity" />
-        <activity android:name=".View.ValidationMenu.ValidationActivity"></activity>
+        <activity android:name=".View.ValidationMenu.ValidationActivity" />
     </application>
 
 </manifest>

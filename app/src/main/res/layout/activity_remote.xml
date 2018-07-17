@@ -57,6 +57,19 @@
                     android:background="@drawable/background_corner_circle_transparent"
                     custom:dv_lineWidth="8dp" />
 
+                <Button
+                    android:id="@+id/button_started"
+                    android:layout_width="158dp"
+                    android:layout_height="158dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="57dp"
+                    android:text="@string/start"
+                    android:textSize="18sp"
+                    android:visibility="invisible"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:background="@drawable/background_corner_circle_orange" />
+
                 <TextView
                     android:id="@+id/mode"
                     android:layout_width="match_parent"
@@ -116,6 +129,22 @@
                 </LinearLayout>
             </RelativeLayout>
 
+            <ToggleButton
+                android:layout_below="@+id/layout_top"
+                android:id="@+id/button_ignition_on"
+                android:textColor="@color/white"
+                android:textOff="@string/turn_on_ignition_dissable"
+                android:textOn="@string/turn_on_ignition_enable"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/background_box_green"
+                android:textSize="14sp"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <LinearLayout
                 android:id="@+id/toggle_top"
                 android:layout_width="match_parent"
@@ -123,7 +152,7 @@
                 android:orientation="horizontal"
                 android:baselineAligned="false"
                 android:layout_marginTop="20dp"
-                android:layout_below="@+id/layout_top"
+                android:layout_below="@+id/button_ignition_on"
                 android:paddingEnd="@dimen/activity_margin"
                 android:paddingStart="@dimen/activity_margin"
                 android:layout_gravity="center_vertical"
@@ -181,10 +210,10 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content">
                     <ToggleButton
-                        android:id="@+id/btn_ignition"
+                        android:id="@+id/btn_ignition_off"
                         android:textColor="@color/white"
-                        android:textOff="@string/menu_ignition_off"
-                        android:textOn="@string/menu_ignition_on"
+                        android:textOff="@string/menu_ignition_on"
+                        android:textOn="@string/menu_ignition_off"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
                         android:layout_width="match_parent"

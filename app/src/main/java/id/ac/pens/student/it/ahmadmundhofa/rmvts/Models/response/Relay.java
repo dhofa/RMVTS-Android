@@ -4,33 +4,36 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Relay {
-    @SerializedName("gps")
+    @SerializedName("ignition_off")
     @Expose
-    private Boolean gps;
-    @SerializedName("ignition")
+    private Boolean ignitionOff;
+    @SerializedName("ignition_on")
     @Expose
-    private Boolean ignition;
+    private Boolean ignitionOn;
     @SerializedName("vibration")
     @Expose
     private Boolean vibration;
     @SerializedName("buzzer")
     @Expose
     private Boolean buzzer;
+    @SerializedName("realtime_gps")
+    @Expose
+    private Boolean realtimeGps;
 
-    public Boolean getGps() {
-        return gps;
+    public Boolean getIgnitionOff() {
+        return ignitionOff;
     }
 
-    public void setGps(Boolean gps) {
-        this.gps = gps;
+    public void setIgnitionOff(Boolean ignitionOff) {
+        this.ignitionOff = ignitionOff;
     }
 
-    public Boolean getIgnition() {
-        return ignition;
+    public Boolean getIgnitionOn() {
+        return ignitionOn;
     }
 
-    public void setIgnition(Boolean ignition) {
-        this.ignition = ignition;
+    public void setIgnitionOn(Boolean ignitionOn) {
+        this.ignitionOn = ignitionOn;
     }
 
     public Boolean getVibration() {
@@ -47,6 +50,14 @@ public class Relay {
 
     public void setBuzzer(Boolean buzzer) {
         this.buzzer = buzzer;
+    }
+
+    public Boolean getRealtimeGps() {
+        return realtimeGps;
+    }
+
+    public void setRealtimeGps(Boolean realtimeGps) {
+        this.realtimeGps = realtimeGps;
     }
 
 }

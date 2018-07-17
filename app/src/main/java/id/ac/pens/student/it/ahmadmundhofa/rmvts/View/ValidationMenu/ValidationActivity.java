@@ -3,6 +3,7 @@ package id.ac.pens.student.it.ahmadmundhofa.rmvts.View.ValidationMenu;
 import android.Manifest;
 import android.animation.Animator;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,6 +14,7 @@ import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -20,8 +22,10 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -33,6 +37,7 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -41,8 +46,10 @@ import javax.crypto.SecretKey;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.R;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Utils.SessionManager;
+import id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RemoteMenu.RemoteActivity;
 
 public class ValidationActivity extends AppCompatActivity {
 
@@ -51,6 +58,15 @@ public class ValidationActivity extends AppCompatActivity {
 
     @BindView(R.id.activity_fingerprint)
     RelativeLayout rootLayout;
+
+    @BindView(R.id.input_password)
+    EditText inputPassword;
+
+    @BindView(R.id.submit)
+    TextView submit;
+
+    @BindView(R.id.bottom_text)
+    TextView bottomText;
 
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
@@ -61,14 +77,52 @@ public class ValidationActivity extends AppCompatActivity {
     private static final String KEY_NAME = "RMVTS";
     private Cipher cipher;
 
+    private String token;
+    private SessionManager sessionManager;
+    private HashMap<String, String> dataSession;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_validation);
         ButterKnife.bind(this);
+        settupSessionManager();
         settupTransition(savedInstanceState);
         settupFingerPrint();
+    }
+
+    private void settupSessionManager() {
+        sessionManager = new SessionManager(Objects.requireNonNull(this));
+        dataSession = sessionManager.getUserDetails();
+        token = dataSession.get(SessionManager.token);
+    }
+
+    @OnClick(R.id.use_password)
+    public void ValidatePasswordClicked(){
+        bottomText.setVisibility(View.INVISIBLE);
+        inputPassword.setVisibility(View.VISIBLE);
+        submit.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.submit)
+    public void submitValidation(){
+        String password = inputPassword.getText().toString();
+        if(password.equals("1234")){
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, submit, "transition");
+            int revealX = (int) (submit.getX() + submit.getWidth() / 2);
+            int revealY = (int) (submit.getY() + submit.getHeight() / 2);
+
+            Intent intent = new Intent(this, RemoteActivity.class);
+            intent.putExtra(ValidationActivity.EXTRA_CIRCULAR_REVEAL_X, revealX);
+            intent.putExtra(ValidationActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY);
+
+            ActivityCompat.startActivity(this, intent, options.toBundle());
+            finish();
+        }else{
+            Toast.makeText(this, "Your Password Code is False", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void settupTransition(Bundle savedInstanceState) {

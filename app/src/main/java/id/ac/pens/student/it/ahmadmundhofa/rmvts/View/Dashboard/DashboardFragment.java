@@ -187,8 +187,9 @@ public class DashboardFragment extends Fragment {
     }
 
     private void settupDataRelay(DataResponse dataResponse) {
-        Boolean relay_gps = dataResponse.getRelay().getGps();
-        Boolean relay_ignition = dataResponse.getRelay().getIgnition();
+        Boolean relay_gps = dataResponse.getRelay().getRealtimeGps();
+        Boolean relay_ignition_off = dataResponse.getRelay().getIgnitionOff();
+        Boolean relay_ignition_on  = dataResponse.getRelay().getIgnitionOn();
         Boolean relay_vibration = dataResponse.getRelay().getVibration();
         Boolean relay_buzzer = dataResponse.getRelay().getBuzzer();
 

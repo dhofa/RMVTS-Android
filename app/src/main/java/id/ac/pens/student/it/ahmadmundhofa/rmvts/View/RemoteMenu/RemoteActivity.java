@@ -15,10 +15,12 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -49,6 +51,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
+import butterknife.OnTouch;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiModels;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiService;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.Models.response.DataResponse;
@@ -68,18 +71,16 @@ public class RemoteActivity extends AppCompatActivity {
     private int revealX;
     private int revealY;
 
-    @BindView(R.id.btn_ignition)
-    ToggleButton btnIgnition;
+    @BindView(R.id.btn_ignition_off)
+    ToggleButton btnIgnitionOff;
+    @BindView(R.id.button_ignition_on)
+    ToggleButton btnIgnitionOn;
     @BindView(R.id.btn_parking_mode)
     ToggleButton btnParkingMode;
     @BindView(R.id.btn_gps)
     ToggleButton btnGps;
     @BindView(R.id.btn_alarm)
     ToggleButton btnAlarm;
-//    @BindView(R.id.header_owner)
-//    TextView headerOwner;
-//    @BindView(R.id.header_plat)
-//    TextView headerPlat;
     @BindView(R.id.text_gps)
     TextView textGps;
     @BindView(R.id.text_alarm)
@@ -100,6 +101,9 @@ public class RemoteActivity extends AppCompatActivity {
     ProgressBar progressbar;
     @BindView(R.id.root_layout)
     RelativeLayout rootLayout;
+    @BindView(R.id.button_started)
+    Button button_started;
+
     private String token;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
@@ -135,12 +139,13 @@ public class RemoteActivity extends AppCompatActivity {
                 }else{
                     Toast.makeText(RemoteActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
+                progressbar.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
                 Toast.makeText(RemoteActivity.this, "Fail to get data..", Toast.LENGTH_SHORT).show();
+                progressbar.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -300,7 +305,7 @@ public class RemoteActivity extends AppCompatActivity {
         }
     };
 
-    private Emitter.Listener ignitionEmitter = new Emitter.Listener() {
+    private Emitter.Listener ignitionOffEmitter = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -324,14 +329,39 @@ public class RemoteActivity extends AppCompatActivity {
         }
     };
 
+    private Emitter.Listener ignitionOnEmitter = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String msg;
+                    try {
+                        msg = data.getString("msg");
+                    } catch (JSONException e) {
+                        return;
+                    }
+                    Log.e("status ignition off =>", msg);
+                    if (msg.equals("true")) {
+                        resultControlIgnitionOnTrue();
+                    } else {
+                        resultControlIgnitionOnFalse();
+                    }
+                }
+            });
+        }
+    };
     private void settupDataRelay(DataResponse dataResponse) {
-        Boolean relay_gps = dataResponse.getRelay().getGps();
-        Boolean relay_ignition = dataResponse.getRelay().getIgnition();
+        Boolean relay_gps = dataResponse.getRelay().getRealtimeGps();
+        Boolean relay_ignition_off = dataResponse.getRelay().getIgnitionOff();
+        Boolean relay_ignition_on  = dataResponse.getRelay().getIgnitionOn();
         Boolean relay_vibration = dataResponse.getRelay().getVibration();
         Boolean relay_buzzer = dataResponse.getRelay().getBuzzer();
 
         btnGps.setChecked(relay_gps);
-        btnIgnition.setChecked(relay_ignition);
+        btnIgnitionOff.setChecked(relay_ignition_off);
+        btnIgnitionOn.setChecked(relay_ignition_on);
         btnParkingMode.setChecked(relay_vibration);
         btnAlarm.setChecked(relay_buzzer);
 
@@ -341,7 +371,13 @@ public class RemoteActivity extends AppCompatActivity {
             resultAlarmFalse();
         }
 
-        if(relay_ignition){
+        if(relay_ignition_on){
+            resultControlIgnitionOnTrue();
+        }else{
+            resultControlIgnitionOnFalse();
+        }
+
+        if(relay_ignition_off){
             resultIgnitionTrue();
         }else{
             resultIgnitionFalse();
@@ -373,8 +409,9 @@ public class RemoteActivity extends AppCompatActivity {
         }
 
         mSocket.on("relay1", buzzerEmitter);
-        mSocket.on("relay2", vibrationEmitter);
-        mSocket.on("relay3", ignitionEmitter);
+        mSocket.on("relay2", ignitionOffEmitter);
+        mSocket.on("relay3", ignitionOnEmitter);
+        mSocket.on("vibration", vibrationEmitter);
         mSocket.connect();
     }
 
@@ -421,27 +458,214 @@ public class RemoteActivity extends AppCompatActivity {
         }
     }
 
-    protected void unRevealActivity() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            finish();
-        } else {
-            float finalRadius = (float) (Math.max(rootLayout.getWidth(), rootLayout.getHeight()) * 1.1);
-            Animator circularReveal = ViewAnimationUtils.createCircularReveal(
-                    rootLayout, revealX, revealY, finalRadius, 0);
-
-            circularReveal.setDuration(400);
-            circularReveal.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    rootLayout.setVisibility(View.INVISIBLE);
-                    finish();
-                }
-            });
-
-
-            circularReveal.start();
+    @OnTouch(R.id.button_started)
+    public boolean startingUpVehicle(View v, MotionEvent event) {
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_DOWN){
+            Log.d("start button", "pushed..");
+            JSONObject content1 = new JSONObject();
+            try {
+                content1.put("msg", true);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+            mSocket.emit("relay4", content1);
+        } else if (action == event.ACTION_UP){
+            Log.d("start button", "not pushed..");
+            JSONObject content2 = new JSONObject();
+            try {
+                content2.put("msg", false);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+            mSocket.emit("relay4", content2);
         }
+        return false;
     }
+
+    @OnCheckedChanged(R.id.button_ignition_on)
+    public void setControlIgnitionOn(CompoundButton button, boolean checked) {
+        JSONObject content = new JSONObject();
+        if (checked) {
+            try {
+                content.put("msg", true);
+            } catch (JSONException e) {
+                return;
+            }
+            resultControlIgnitionOnTrue();
+        } else {
+            try {
+                content.put("msg", false);
+            } catch (JSONException e) {
+                return;
+            }
+            resultControlIgnitionOnFalse();
+        }
+        mSocket.emit("relay3", content);
+    }
+
+    private void resultControlIgnitionOnFalse() {
+        button_started.setVisibility(View.INVISIBLE);
+        btnIgnitionOn.setBackground(getResources().getDrawable(R.drawable.background_box_orange));
+        btnIgnitionOn.setText(R.string.turn_on_ignition_dissable);
+    }
+
+    private void resultControlIgnitionOnTrue() {
+        button_started.setVisibility(View.VISIBLE);
+        btnIgnitionOn.setBackground(getResources().getDrawable(R.drawable.background_box_green));
+        btnIgnitionOn.setText(R.string.turn_on_ignition_enable);
+    }
+
+    @OnCheckedChanged(R.id.btn_gps)
+    public void setUpGps(CompoundButton button, boolean checked) {
+        JSONObject content = new JSONObject();
+        if (checked) {
+            try {
+                content.put("msg", true);
+            } catch (JSONException e) {
+                return;
+            }
+            resultGpsTrue();
+        } else {
+            try {
+                content.put("msg", false);
+            } catch (JSONException e) {
+                return;
+            }
+            resultGpsFalse();
+        }
+        mSocket.emit("activate_realtime_gps", content);
+    }
+
+    private void resultGpsFalse() {
+        btnGps.setBackground(getResources().getDrawable(R.drawable.togle_off_left_top));
+        textGps.setText(R.string.gps_off);
+    }
+
+    private void resultGpsTrue() {
+        btnGps.setBackground(getResources().getDrawable(R.drawable.togle_on_left_top));
+        textGps.setText(R.string.gps_on);
+    }
+
+    @OnCheckedChanged(R.id.btn_parking_mode)
+    public void setUpParking(CompoundButton button, boolean checked) {
+        JSONObject content = new JSONObject();
+        if (checked) {
+            try {
+                content.put("msg", true);
+            } catch (JSONException e) {
+                return;
+            }
+            resultParkingEventTrue();
+        } else {
+            try {
+                content.put("msg", false);
+            } catch (JSONException e) {
+                return;
+            }
+            resultParkingEventFalse();
+        }
+        mSocket.emit("vibration", content);
+    }
+
+    private void resultParkingEventFalse() {
+        btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_off_right_top));
+        textMode.setText(R.string.parkir_off);
+    }
+
+    private void resultParkingEventTrue() {
+        btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_on_right_top));
+        textMode.setText(R.string.parkir_on);
+    }
+
+    @OnCheckedChanged(R.id.btn_alarm)
+    public void setUpAlarm(CompoundButton button, boolean checked) {
+        JSONObject content = new JSONObject();
+        if (checked) {
+            try {
+                content.put("msg", true);
+            } catch (JSONException e) {
+                return;
+            }
+            resultAlarmTrue();
+        } else {
+            try {
+                content.put("msg", false);
+            } catch (JSONException e) {
+                return;
+            }
+            resultAlarmFalse();
+        }
+        mSocket.emit("relay1", content);
+    }
+
+    private void resultAlarmFalse() {
+        btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_off_right_bottom));
+        textAlarm.setText(R.string.alarm_off);
+    }
+
+    private void resultAlarmTrue() {
+        btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_on_right_bottom));
+        textAlarm.setText(R.string.alarm_on);
+    }
+
+    @OnCheckedChanged(R.id.btn_ignition_off)
+    public void setUpIgnition(CompoundButton button, boolean checked) {
+        JSONObject content = new JSONObject();
+        if (checked) {
+            try {
+                content.put("msg", true);
+            } catch (JSONException e) {
+                return;
+            }
+            resultIgnitionTrue();
+        } else {
+            try {
+                content.put("msg", false);
+            } catch (JSONException e) {
+                return;
+            }
+            resultIgnitionFalse();
+        }
+        mSocket.emit("relay2", content);
+    }
+
+    private void resultIgnitionFalse() {
+        btnIgnitionOff.setBackground(getResources().getDrawable(R.drawable.togle_off_left_bottom));
+    }
+
+    private void resultIgnitionTrue() {
+        btnIgnitionOff.setBackground(getResources().getDrawable(R.drawable.togle_on_left_bottom));
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        progressbar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, progressbar, "transition");
+        int revealX = (int) (progressbar.getX() + progressbar.getWidth() / 2);
+        int revealY = (int) (progressbar.getY() + progressbar.getHeight() / 2);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_CIRCULAR_REVEAL_X, revealX);
+        intent.putExtra(MainActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY);
+
+        ActivityCompat.startActivity(this, intent, options.toBundle());
+        finish();
+    }
+}
+
+
+
+
+
+
+
+
 
 
 //    private void settupBottomSheet() {
@@ -491,143 +715,3 @@ public class RemoteActivity extends AppCompatActivity {
 //        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
 //        startActivity(intent);
 //    }
-
-    @OnCheckedChanged(R.id.btn_gps)
-    public void setUpGps(CompoundButton button, boolean checked) {
-        JSONObject content = new JSONObject();
-        if (checked) {
-            try {
-                content.put("msg", true);
-            } catch (JSONException e) {
-                return;
-            }
-            resultGpsTrue();
-        } else {
-            try {
-                content.put("msg", false);
-            } catch (JSONException e) {
-                return;
-            }
-            resultGpsFalse();
-        }
-        mSocket.emit("statusgps", content);
-    }
-
-    private void resultGpsFalse() {
-        btnGps.setBackground(getResources().getDrawable(R.drawable.togle_off_left_top));
-        textGps.setText(R.string.gps_off);
-    }
-
-    private void resultGpsTrue() {
-        btnGps.setBackground(getResources().getDrawable(R.drawable.togle_on_left_top));
-        textGps.setText(R.string.gps_on);
-    }
-
-    @OnCheckedChanged(R.id.btn_parking_mode)
-    public void setUpParking(CompoundButton button, boolean checked) {
-        JSONObject content = new JSONObject();
-        if (checked) {
-            try {
-                content.put("msg", true);
-            } catch (JSONException e) {
-                return;
-            }
-            resultParkingEventTrue();
-        } else {
-            try {
-                content.put("msg", false);
-            } catch (JSONException e) {
-                return;
-            }
-            resultParkingEventFalse();
-        }
-        mSocket.emit("relay2", content);
-    }
-
-    private void resultParkingEventFalse() {
-        btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_off_right_top));
-        textMode.setText(R.string.parkir_off);
-    }
-
-    private void resultParkingEventTrue() {
-        btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_on_right_top));
-        textMode.setText(R.string.parkir_on);
-    }
-
-    @OnCheckedChanged(R.id.btn_alarm)
-    public void setUpAlarm(CompoundButton button, boolean checked) {
-        JSONObject content = new JSONObject();
-        if (checked) {
-            try {
-                content.put("msg", true);
-            } catch (JSONException e) {
-                return;
-            }
-            resultAlarmTrue();
-        } else {
-            try {
-                content.put("msg", false);
-            } catch (JSONException e) {
-                return;
-            }
-            resultAlarmFalse();
-        }
-        mSocket.emit("relay1", content);
-    }
-
-    private void resultAlarmFalse() {
-        btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_off_right_bottom));
-        textAlarm.setText(R.string.alarm_off);
-    }
-
-    private void resultAlarmTrue() {
-        btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_on_right_bottom));
-        textAlarm.setText(R.string.alarm_on);
-    }
-
-    @OnCheckedChanged(R.id.btn_ignition)
-    public void setUpIgnition(CompoundButton button, boolean checked) {
-        JSONObject content = new JSONObject();
-        if (checked) {
-            try {
-                content.put("msg", true);
-            } catch (JSONException e) {
-                return;
-            }
-            resultIgnitionTrue();
-        } else {
-            try {
-                content.put("msg", false);
-            } catch (JSONException e) {
-                return;
-            }
-            resultIgnitionFalse();
-        }
-        mSocket.emit("relay3", content);
-    }
-
-    private void resultIgnitionFalse() {
-        btnIgnition.setBackground(getResources().getDrawable(R.drawable.togle_off_left_bottom));
-//        ignitionStatus.setText(R.string.ignition_off);
-    }
-
-    private void resultIgnitionTrue() {
-        btnIgnition.setBackground(getResources().getDrawable(R.drawable.togle_on_left_bottom));
-//        ignitionStatus.setText(R.string.ignition_on);
-    }
-
-    @Override
-    public void onBackPressed() {
-//        super.onBackPressed();
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, progressbar, "transition");
-        int revealX = (int) (progressbar.getX() + progressbar.getWidth() / 2);
-        int revealY = (int) (progressbar.getY() + progressbar.getHeight() / 2);
-
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(MainActivity.EXTRA_CIRCULAR_REVEAL_X, revealX);
-        intent.putExtra(MainActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY);
-
-        ActivityCompat.startActivity(this, intent, options.toBundle());
-        finish();
-    }
-}

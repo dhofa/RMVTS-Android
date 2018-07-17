@@ -64,7 +64,53 @@
 
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/input_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/use_password"
+        android:hint="@string/insert_login_password"
+        android:background="@drawable/background_border_white"
+        android:textColorHint="@color/white"
+        android:textAlignment="center"
+        android:padding="5dp"
+        android:imeOptions="actionSend"
+        android:visibility="invisible"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="8dp"/>
+
     <TextView
+        android:id="@+id/use_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/use_password"
+        android:textColor="@color/white"
+        android:background="@drawable/background_box_green"
+        android:padding="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_above="@+id/bottom_text"/>
+
+    <TextView
+        android:id="@+id/submit"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/submit"
+        android:textColor="@color/white"
+        android:background="@drawable/background_box_green"
+        android:padding="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_above="@+id/bottom_text"/>
+
+    <TextView
+        android:id="@+id/bottom_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

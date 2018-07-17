@@ -14,8 +14,8 @@
     <string name="menu_map">MAP</string>
     <string name="menu_alarm_on">ALARM ON</string>
     <string name="menu_alarm_off">ALARM OFF</string>
-    <string name="menu_ignition_on">IGNITION ON</string>
-    <string name="menu_ignition_off">IGNITION OFF</string>
+    <string name="menu_ignition_on">Electricity ON</string>
+    <string name="menu_ignition_off">Electricity OFF</string>
     <string name="menu_parking_on">PARKING ON</string>
     <string name="menu_parking_off">PARKING OFF</string>
     <string name="menu_gps_on">GPS ON</string>
@@ -72,5 +72,12 @@
     <string name="authentication">Authentication</string>
     <string name="please_place_your_fingertip_on_the_scanner_to_verify_your_identity">Please place your fingertip on the scanner to verify your identity</string>
     <string name="you_need_to_take_authentication_before_enter_the_remote_menu_this_is_needed_for_security_reasons">You need to take authentication before enter the remote menu, this is needed for security reasons..</string>
+    <string name="turn_on_ignition">Turn On Ignition</string>
+    <string name="turn_on_ignition_dissable">Ignition is Turned OFF</string>
+    <string name="turn_on_ignition_enable">Ignition is Turned ON</string>
+    <string name="start">Start</string>
+    <string name="use_password">Use Password</string>
+    <string name="insert_login_password">Insert Login Password</string>
+    <string name="submit">Submit</string>
 
 </resources>
