@@ -30,8 +30,12 @@ public class LogActivityAdapter extends RecyclerView.Adapter<LogActivityAdapter.
         LogActivity logActivity = logActivityList.get(position);
         String title_text = logActivity.getTitle();
         String detail_text= logActivity.getDetail();
+        String[] date_time  = logActivity.getCreated().split("T");
+        String[] only_time  = date_time[1].split(":");
+
         holder.title.setText(title_text);
         holder.detail.setText(detail_text);
+        holder.time_taken.setText(only_time[0]+":"+only_time[1]);
 
         if(title_text.equals("gps status")){
             holder.imageSymbol.setImageResource(R.drawable.ic_log_map);
@@ -54,13 +58,14 @@ public class LogActivityAdapter extends RecyclerView.Adapter<LogActivityAdapter.
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, detail;
+        public TextView title, detail,time_taken;
         public ImageView imageSymbol;
 
         public MyViewHolder(View view) {
             super(view);
             title  = (TextView) view.findViewById(R.id.title);
             detail = (TextView) view.findViewById(R.id.detail);
+            time_taken = (TextView) view.findViewById(R.id.time_taken);
             imageSymbol = (ImageView) view.findViewById(R.id.image_symbol);
         }
     }

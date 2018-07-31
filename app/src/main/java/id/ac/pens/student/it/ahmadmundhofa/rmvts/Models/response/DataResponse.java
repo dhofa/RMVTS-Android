@@ -36,7 +36,7 @@ public class DataResponse {
     @SerializedName("log_activity")
     @Expose
     private List<LogActivity> logActivity = null;
-    @SerializedName("_id")
+    @SerializedName("id")
     @Expose
     private String id;
     @SerializedName("createdAt")
