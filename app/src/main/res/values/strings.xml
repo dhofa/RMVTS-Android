@@ -79,5 +79,7 @@
     <string name="use_password">Use Password</string>
     <string name="insert_login_password">Insert Login Password</string>
     <string name="submit">Submit</string>
+    <string name="stop_real_time_gps">Stop Real-time GPS</string>
+    <string name="start_real_time_gps">Start Real-time GPS</string>
 
 </resources>

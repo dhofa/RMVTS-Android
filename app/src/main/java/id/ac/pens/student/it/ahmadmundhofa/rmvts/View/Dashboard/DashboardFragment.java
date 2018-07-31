@@ -137,11 +137,11 @@ public class DashboardFragment extends Fragment {
                         DataResponse dataResponse = response.body().getData();
                         if (dataResponse != null) {
                             settupDataRelay(dataResponse);
-                            if (dataResponse.getVehicleData().getLastLocation().getLastLatitude() == 0 && dataResponse.getVehicleData().getLastLocation().getLastLongitude() == 0) {
+                            if (dataResponse.getVehicleData().getLastLocation().getLastLatitude() == 0 || dataResponse.getVehicleData().getLastLocation().getLastLongitude() == 0 || dataResponse.getVehicleData().getLastLocation().getLastLatitude() == null || dataResponse.getVehicleData().getLastLocation().getLastLongitude() == null) {
                                 titleAlamat.setText(getResources().getString(R.string.not_found));
                                 detailAlamat.setText(getResources().getString(R.string.detail_not_found));
                                 Toast.makeText(getActivity(), "Anda belum memiliki data lokasi terakhir..", Toast.LENGTH_SHORT).show();
-                                mainContent.animate().alpha(1.0f).setDuration(1000);
+                                mainContent.animate().alpha(1.0f).setDuration(500);
                                 dismissProgress();
                             } else {
                                 LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLocation().getLastLatitude(), dataResponse.getVehicleData().getLastLocation().getLastLongitude());

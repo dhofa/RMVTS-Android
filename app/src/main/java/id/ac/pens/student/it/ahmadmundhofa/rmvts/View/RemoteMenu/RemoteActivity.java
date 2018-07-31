@@ -534,7 +534,7 @@ public class RemoteActivity extends AppCompatActivity {
             }
             resultGpsFalse();
         }
-        mSocket.emit("activate_realtime_gps", content);
+        mSocket.emit("activate_python_gps", content);
     }
 
     private void resultGpsFalse() {

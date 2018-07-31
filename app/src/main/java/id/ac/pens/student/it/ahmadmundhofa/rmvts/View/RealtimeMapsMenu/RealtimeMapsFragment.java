@@ -18,7 +18,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -49,6 +51,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.Unbinder;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiModels;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiService;
@@ -71,6 +74,8 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 99;
     @BindView(R.id.MyMap)
     MapView myMap;
+    @BindView(R.id.btn_gps)
+    ToggleButton btnGps;
     private GoogleMap googleMap;
     private String token;
     private SessionManager sessionManager;
@@ -79,7 +84,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
     private Location myLocation;
     private Marker marker_android;
     private Marker marker_vehicle;
-    private String URL_HOST = "https://rmvts.herokuapp.com/";
+    private String URL_HOST = "https://rmvts.jagopesan.com/";
     private Socket mSocket;
     private LatLng vehicle_last_location;
 
@@ -110,9 +115,40 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
             Log.v("Error karena => ", e.toString());
         }
 
-        mSocket.on("real-time-maps", realtimeMapsEmitter);
+        mSocket.on("activate_realtime_gps", realtimeMapsEmitter);
         mSocket.connect();
     }
+
+    @OnCheckedChanged(R.id.btn_gps)
+    public void setUpGps(CompoundButton button, boolean checked) {
+        JSONObject content = new JSONObject();
+        if (checked) {
+            try {
+                content.put("msg", true);
+            } catch (JSONException e) {
+                return;
+            }
+            resultGpsTrue();
+        } else {
+            try {
+                content.put("msg", false);
+            } catch (JSONException e) {
+                return;
+            }
+            resultGpsFalse();
+        }
+        mSocket.emit("activate_realtime_gps", content);
+    }
+
+    private void resultGpsFalse() {
+        btnGps.setBackground(getResources().getDrawable(R.drawable.background_box_green));
+
+    }
+
+    private void resultGpsTrue() {
+        btnGps.setBackground(getResources().getDrawable(R.drawable.background_box_orange));
+    }
+
 
     private Emitter.Listener realtimeMapsEmitter = new Emitter.Listener() {
         @Override

@@ -70,6 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/use_password"
         android:hint="@string/insert_login_password"
+        android:inputType="textPassword"
         android:background="@drawable/background_border_white"
         android:textColorHint="@color/white"
         android:textAlignment="center"

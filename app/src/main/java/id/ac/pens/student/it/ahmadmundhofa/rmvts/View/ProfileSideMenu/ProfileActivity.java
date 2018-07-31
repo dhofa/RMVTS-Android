@@ -68,6 +68,9 @@ public class ProfileActivity extends AppCompatActivity {
     @BindView(R.id.btn_upload)
     TextView btnUpload;
 
+    @BindView(R.id.device_ID)
+    TextView deviceID;
+
     @BindView(R.id.progressbar)
     ProgressBar progressbar;
 
@@ -103,6 +106,7 @@ public class ProfileActivity extends AppCompatActivity {
         String plat = dataSession.get(SessionManager.plate_number);
         String address = dataSession.get(SessionManager.address);
         String vehicle_type = dataSession.get(SessionManager.vehicle_type);
+        String user_id = dataSession.get(SessionManager.id_user);
 
         Picasso.get().load(url_foto).into(fotoProfile);
         profileOwner.setText(owner);
@@ -110,6 +114,7 @@ public class ProfileActivity extends AppCompatActivity {
         profilePlat.setText(plat);
         profileAddress.setText(address);
         profileVehicleType.setText(vehicle_type);
+        deviceID.setText(user_id);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
