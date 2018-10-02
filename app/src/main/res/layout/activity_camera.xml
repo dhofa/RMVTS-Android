@@ -20,7 +20,7 @@ android:orientation="vertical">
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="#00006C"
+        android:background="@color/colorPrimaryApp"
         app:popupTheme="@style/AppTheme.PopupOverlay">
 
         <TextView
@@ -30,7 +30,7 @@ android:orientation="vertical">
             android:layout_gravity="center"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:text="Camera Menus"
+            android:text="Camera"
             android:textStyle="bold" />
     </android.support.v7.widget.Toolbar>
 

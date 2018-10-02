@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--App Theme-->
-    <color name="colorPrimaryApp">#00006C</color>
-    <color name="colorPrimaryDarkApp">#00006C</color>
+    <!--<color name="colorPrimaryApp">#00006C</color>-->
+    <!--<color name="colorPrimaryDarkApp">#00006C</color>-->
+    <!--Beagle-->
+    <color name="colorPrimaryApp">#1E1F5C</color>
+    <color name="colorPrimaryDarkApp">#1E1F5C</color>
     <color name="colorAccentApp">#FFF</color>
 
     <!--No ActionBar-->
@@ -25,6 +28,7 @@
     <color name="login_background">#F1E7EE</color>
     <color name="default_text">#444</color>
     <color name="white">#FFFFFF</color>
+    <color name="brown">#412B1D</color>
     <color name="blue_default">#2A48FF</color>
 
     <color name="bgBottomNavigation">#00006C</color>

@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/logo_login" />
+        android:src="@drawable/beagle" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -95,7 +95,7 @@
             android:layout_marginTop="25dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/box_button"
+            android:background="@drawable/box_button_beagle"
             app:spinning_bar_color="#FFF"
             app:spinning_bar_width="4dp"
             app:initialCornerAngle="48dp"

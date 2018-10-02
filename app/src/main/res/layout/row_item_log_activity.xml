@@ -40,7 +40,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/background_box_orange" />
+            android:src="@drawable/background_box_orange_toggle" />
         <TextView
             android:id="@+id/time_taken"
             android:layout_width="wrap_content"

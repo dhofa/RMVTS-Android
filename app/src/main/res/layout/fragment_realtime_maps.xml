@@ -17,7 +17,7 @@
         android:textAllCaps="false"
         android:textOn="@string/stop_real_time_gps"
         android:layout_width="match_parent"
-        android:background="@drawable/background_box_green"
+        android:background="@drawable/background_box_brown_toggle"
         android:textSize="14sp"
         android:layout_height="wrap_content" />
 </FrameLayout>

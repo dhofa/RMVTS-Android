@@ -1,7 +1,6 @@
 package id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RemoteMenu;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
@@ -66,7 +65,7 @@ import retrofit2.Response;
 public class RemoteActivity extends AppCompatActivity {
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
-    private String URL_HOST = "https://rmvts.jagopesan.com/";
+    private String URL_HOST = "https://rmvts.herokuapp.com/";
     private Socket mSocket;
     private int revealX;
     private int revealY;
@@ -131,9 +130,12 @@ public class RemoteActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
                 if(response.body().getStatus().equals("success")){
                     DataResponse dataResponse = response.body().getData();
-                    if(dataResponse!=null){
+                    if(dataResponse!=null && dataResponse.getVehicleData().getLastLocation().getLastLongitude() != 0){
                         settupDataRelay(dataResponse);
-                        LatLng lokasi = new LatLng(dataResponse.getVehicleData().getLastLocation().getLastLatitude(), dataResponse.getVehicleData().getLastLocation().getLastLongitude());
+                        double latitude  = dataResponse.getVehicleData().getLastLocation().getLastLatitude();
+                        double longitude =  dataResponse.getVehicleData().getLastLocation().getLastLongitude();
+
+                        LatLng lokasi = new LatLng(latitude,longitude);
                         locationVehicle(lokasi);
                     }
                 }else{
@@ -506,7 +508,7 @@ public class RemoteActivity extends AppCompatActivity {
 
     private void resultControlIgnitionOnFalse() {
         button_started.setVisibility(View.INVISIBLE);
-        btnIgnitionOn.setBackground(getResources().getDrawable(R.drawable.background_box_orange));
+        btnIgnitionOn.setBackground(getResources().getDrawable(R.drawable.background_box_orange_toggle));
         btnIgnitionOn.setText(R.string.turn_on_ignition_dissable);
     }
 

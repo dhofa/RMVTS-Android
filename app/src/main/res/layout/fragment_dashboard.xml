@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDarkApp"
+    android:background="#F7F5DE"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     tools:context=".View.Dashboard.DashboardFragment">
 
@@ -23,8 +23,8 @@
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="80dp"
                 android:contentDescription="@string/rmvts"
@@ -32,11 +32,10 @@
 
             <TextClock
                 android:id="@+id/textClock"
+                android:layout_below="@+id/logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/logo"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
                 android:format24Hour="kk:mm:ss"
                 android:textColor="#323232"
                 android:textSize="12sp"
@@ -91,7 +90,7 @@
                 android:layout_marginTop="10dp"
                 android:padding="@dimen/activity_margin"
                 android:layout_below="@+id/detail_alamat"
-                android:background="@drawable/background_box_orange"/>
+                android:background="@drawable/background_box_orange_toggle"/>
 
         </RelativeLayout>
 

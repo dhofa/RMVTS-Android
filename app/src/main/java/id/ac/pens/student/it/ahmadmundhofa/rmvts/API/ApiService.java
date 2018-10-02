@@ -9,7 +9,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiService {
-    private static final String ROOT_URL = "https://rmvts.jagopesan.com/";
+    private static final String ROOT_URL = "https://rmvts.herokuapp.com/";
 
     private static Retrofit retrofit = null;
 

@@ -167,8 +167,8 @@ public class TrackVehicleFragment extends Fragment implements OnMapReadyCallback
                     }else {
                         Toast.makeText(getActivity(), "Sorry you dont have track data..", Toast.LENGTH_SHORT).show();
                     }
+                    dismissProgress();
                 }
-                dismissProgress();
             }
 
             @Override

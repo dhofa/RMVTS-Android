@@ -36,7 +36,7 @@ public class LogVibrationAdapter extends RecyclerView.Adapter<LogVibrationAdapte
 
         if(title_text.equals("gps status")){
             holder.imageSymbol.setImageResource(R.drawable.ic_log_map);
-        }else if(title_text.equals("vibration")){
+        }else if(title_text.equals("Vibration Notification")){
             holder.imageSymbol.setImageResource(R.drawable.ic_vibration_orange);
         }else if(title_text.equals("Ignition Notification")){
             holder.imageSymbol.setImageResource(R.drawable.ic_ignition);

@@ -10,14 +10,13 @@
                 android:startColor="#040D23"
                 android:type="linear" />
         </shape>
-
     </item>
 
     <item
         android:bottom="10dp"
-        android:left="10dp"
+        android:left="200dp"
         android:right="50dp"
-        android:top="0dp">
+        android:top="300dp">
         <rotate xmlns:android="http://schemas.android.com/apk/res/android"
             android:fromDegrees="45">
             <shape android:shape="rectangle">
@@ -26,6 +25,7 @@
                     android:radius="30dp" />
 
                 <gradient
+                    android:angle="45"
                     android:endColor="#1E1F5C"
                     android:startColor="#1E1F5C"
                     android:type="linear" />
@@ -33,4 +33,24 @@
         </rotate>
     </item>
 
+    <item
+        android:bottom="0dp"
+        android:left="200dp"
+        android:right="10dp"
+        android:top="400dp">
+        <rotate xmlns:android="http://schemas.android.com/apk/res/android"
+            android:fromDegrees="45">
+            <shape android:shape="rectangle">
+                <corners
+                    android:topRightRadius="20dp"
+                    android:radius="30dp" />
+
+                <gradient
+                    android:angle="45"
+                    android:endColor="#111F5C"
+                    android:startColor="#3E1F5C"
+                    android:type="linear" />
+            </shape>
+        </rotate>
+    </item>
 </layer-list>
