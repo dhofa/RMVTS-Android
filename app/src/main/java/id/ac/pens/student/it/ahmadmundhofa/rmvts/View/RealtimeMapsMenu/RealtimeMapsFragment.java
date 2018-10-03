@@ -87,7 +87,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback, LocationListener {
+public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
@@ -104,12 +104,11 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
     private HashMap<String, String> dataSession;
     private Unbinder unbinder = null;
     private Location myLocation;
-    private Marker marker_android;
     private Marker marker_vehicle;
     private String URL_HOST = "https://rmvts.herokuapp.com/";
     private Socket mSocket;
     private MarkerModel myLocationModel;
-    private Marker lokasi_saya;
+    private Marker marker_android;
     private LatLng vehicle_last_location;
     private FusedLocationProviderClient mFusedLocationClient;
     private Boolean mRequestingLocationUpdates;
@@ -237,12 +236,6 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
                 this.googleMap.getUiSettings().setAllGesturesEnabled(true);
                 this.googleMap.setBuildingsEnabled(false);
                 this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-5, 120), 3.5f));
-//                LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-//                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
-//                myLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//                LatLng current_location = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-//                marker_android = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_my_location)).position(current_location).title("My Location"));
-
                 mRequestingLocationUpdates = true;
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
                 mSettingsClient = LocationServices.getSettingsClient(getActivity());
@@ -250,6 +243,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
                 createLocationRequest();
                 buildLocationSettingsRequest();
                 startLocationUpdates();
+                getLastLocationApi();
             } else {
                 requestPermissions();
             }
@@ -282,6 +276,12 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
         mLocationSettingsRequest = builder.build();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopLocationUpdates();
     }
 
     private void stopLocationUpdates() {
@@ -377,12 +377,12 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
                         if (dataResponse.getVehicleData().getLastLocation().getLastLatitude() == 0 && dataResponse.getVehicleData().getLastLocation().getLastLongitude() == 0) {
                             vehicle_last_location = new LatLng(0, 0);
                             Toast.makeText(getActivity(), "Anda belum memiliki data lokasi terakhir..", Toast.LENGTH_SHORT).show();
-//                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-//                                    .target(marker_android.getPosition())
-//                                    .bearing(5)
-//                                    .tilt(45)
-//                                    .zoom(14)
-//                                    .build()));
+                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                                    .target(marker_android.getPosition())
+                                    .bearing(5)
+                                    .tilt(45)
+                                    .zoom(14)
+                                    .build()));
                         } else {
                             vehicle_last_location = new LatLng(dataResponse.getVehicleData().getLastLocation().getLastLatitude(), dataResponse.getVehicleData().getLastLocation().getLastLongitude());
                             sessionManager.updateLocation(String.valueOf(vehicle_last_location.latitude), String.valueOf(vehicle_last_location.longitude));
@@ -433,10 +433,10 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
         myLocationModel = new MarkerModel(latitude, longitude, "Lokasi Saya", 5, "MyLocation");
         LatLng myLocation = myLocationModel.getPosition();
 
-        if (lokasi_saya != null) {
-            lokasi_saya.remove();
+        if (marker_android != null) {
+            marker_android.remove();
         }
-        lokasi_saya = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vehicle_location)).position(myLocation).title(myLocationModel.getTitle()));
+        marker_android = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vehicle_location)).position(myLocation).title(myLocationModel.getTitle()));
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -447,31 +447,7 @@ public class RealtimeMapsFragment extends Fragment implements OnMapReadyCallback
         }, 5000);
 
     }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        if (marker_android != null) {
-            marker_android.remove();
-            LatLng current_location = new LatLng(location.getLatitude(), location.getLongitude());
-            marker_android = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_my_location)).position(current_location).title("My Location"));
-        }
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-    }
-
+    
     @Nullable
     public String[] getLocationNameAndAddress(LatLng posisiLatLong) {
         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());

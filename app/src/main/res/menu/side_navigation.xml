@@ -7,12 +7,12 @@
         android:title="@string/profile" />
     <item
         android:id="@+id/side_log_ignition"
-        android:icon="@drawable/icon_3"
+        android:icon="@drawable/icon_ignition"
         android:title="@string/log_ignition" />
 
     <item
         android:id="@+id/side_log_camera"
-        android:icon="@drawable/ic_camera"
+        android:icon="@drawable/icon_3"
         android:title="@string/log_camera" />
 
     <item

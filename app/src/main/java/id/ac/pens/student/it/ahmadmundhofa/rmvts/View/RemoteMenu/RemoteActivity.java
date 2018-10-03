@@ -1,16 +1,17 @@
 package id.ac.pens.student.it.ahmadmundhofa.rmvts.View.RemoteMenu;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,6 +22,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -50,6 +52,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
 import butterknife.OnTouch;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiModels;
 import id.ac.pens.student.it.ahmadmundhofa.rmvts.API.ApiService;
@@ -65,11 +68,6 @@ import retrofit2.Response;
 public class RemoteActivity extends AppCompatActivity {
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
-    private String URL_HOST = "https://rmvts.herokuapp.com/";
-    private Socket mSocket;
-    private int revealX;
-    private int revealY;
-
     @BindView(R.id.btn_ignition_off)
     ToggleButton btnIgnitionOff;
     @BindView(R.id.button_ignition_on)
@@ -102,10 +100,115 @@ public class RemoteActivity extends AppCompatActivity {
     RelativeLayout rootLayout;
     @BindView(R.id.button_started)
     Button button_started;
-
+    @BindView(R.id.layout_gps)
+    LinearLayout layout_gps;
+    @BindView(R.id.layout_parking)
+    LinearLayout layout_parking;
+    @BindView(R.id.layout_ignition)
+    LinearLayout layout_ignition;
+    @BindView(R.id.layout_alarm)
+    LinearLayout layout_alarm;
+    private String URL_HOST = "https://rmvts.herokuapp.com/";
+    private Socket mSocket;
+    private int revealX;
+    private int revealY;
     private String token;
     private SessionManager sessionManager;
     private HashMap<String, String> dataSession;
+    private Emitter.Listener buzzerEmitter = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String msg;
+                    try {
+                        msg = data.getString("msg");
+                    } catch (JSONException e) {
+                        return;
+                    }
+                    Log.e("status buzzer =>", msg);
+                    if (msg.equals("true")) {
+                        resultAlarmTrue();
+                    } else {
+                        resultAlarmFalse();
+                    }
+                }
+            });
+        }
+    };
+    private Emitter.Listener vibrationEmitter = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String msg;
+                    try {
+                        msg = data.getString("msg");
+                    } catch (JSONException e) {
+                        return;
+                    }
+                    Log.e("status vibration =>", msg);
+                    if (msg.equals("true")) {
+                        resultParkingEventTrue();
+                    } else {
+                        resultParkingEventFalse();
+                    }
+                }
+            });
+        }
+    };
+    private Emitter.Listener ignitionOffEmitter = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String msg;
+                    try {
+                        msg = data.getString("msg");
+                    } catch (JSONException e) {
+                        return;
+                    }
+                    Log.e("status ignition =>", msg);
+                    if (msg.equals("true")) {
+                        resultIgnitionTrue();
+                    } else {
+                        resultIgnitionFalse();
+                    }
+                }
+            });
+        }
+    };
+    private Emitter.Listener ignitionOnEmitter = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String msg;
+                    try {
+                        msg = data.getString("msg");
+                    } catch (JSONException e) {
+                        return;
+                    }
+                    Log.e("status ignition off =>", msg);
+                    if (msg.equals("true")) {
+                        resultControlIgnitionOnTrue();
+                    } else {
+                        resultControlIgnitionOnFalse();
+                    }
+                }
+            });
+        }
+    };
+    private int counter = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,17 +231,26 @@ public class RemoteActivity extends AppCompatActivity {
         call.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                if(response.body().getStatus().equals("success")){
+                if (response.body().getStatus().equals("success")) {
                     DataResponse dataResponse = response.body().getData();
-                    if(dataResponse!=null && dataResponse.getVehicleData().getLastLocation().getLastLongitude() != 0){
-                        settupDataRelay(dataResponse);
-                        double latitude  = dataResponse.getVehicleData().getLastLocation().getLastLatitude();
-                        double longitude =  dataResponse.getVehicleData().getLastLocation().getLastLongitude();
+                    settupDataRelay(dataResponse);
 
-                        LatLng lokasi = new LatLng(latitude,longitude);
+                    if (dataResponse.getVehicleData().getLastLocation().getLastLatitude() == 0 || dataResponse.getVehicleData().getLastLocation().getLastLongitude() == 0 || dataResponse.getVehicleData().getLastLocation().getLastLatitude() == null || dataResponse.getVehicleData().getLastLocation().getLastLongitude() == null) {
+                        titleAlamat.setText(getResources().getString(R.string.not_found));
+                        detailAlamat.setText(getResources().getString(R.string.detail_not_found));
+                        Toast.makeText(RemoteActivity.this, "Anda belum memiliki data lokasi terakhir..", Toast.LENGTH_SHORT).show();
+
+                        mainContent.setVisibility(View.VISIBLE);
+                        progressbar.setVisibility(View.INVISIBLE);
+                        mainContent.animate().alpha(1.0f).setDuration(500);
+                    } else {
+                        double latitude = dataResponse.getVehicleData().getLastLocation().getLastLatitude();
+                        double longitude = dataResponse.getVehicleData().getLastLocation().getLastLongitude();
+
+                        LatLng lokasi = new LatLng(latitude, longitude);
                         locationVehicle(lokasi);
                     }
-                }else{
+                } else {
                     Toast.makeText(RemoteActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 progressbar.setVisibility(View.INVISIBLE);
@@ -204,12 +316,13 @@ public class RemoteActivity extends AppCompatActivity {
         String[] locationPinned = getLocationNameAndAddress(lokasi);
 
         assert locationPinned != null;
-        if(locationPinned[0] != null && locationPinned[1]!=null){
+        if (locationPinned[0] != null && locationPinned[1] != null) {
             titleAlamat.setText(locationPinned[0]);
             detailAlamat.setText(locationPinned[1]);
         }
         mainContent.setVisibility(View.VISIBLE);
         progressbar.setVisibility(View.INVISIBLE);
+        mainContent.animate().alpha(1.0f).setDuration(500);
     }
 
     @Nullable
@@ -220,7 +333,7 @@ public class RemoteActivity extends AppCompatActivity {
         runOnUiThread(() -> {
             try {
                 int MAX_RESULTS = 1;
-                if(posisiLatLong!=null){
+                if (posisiLatLong != null) {
                     List<Address> addresses = geocoder.getFromLocation(posisiLatLong.latitude, posisiLatLong.longitude, MAX_RESULTS);
                     for (int i = 0; i < MAX_RESULTS; i++) {
                         Log.v("List Alamat => ", "ke-" + String.valueOf(i));
@@ -259,105 +372,10 @@ public class RemoteActivity extends AppCompatActivity {
         return locationPinned;
     }
 
-    private Emitter.Listener buzzerEmitter = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String msg;
-                    try {
-                        msg = data.getString("msg");
-                    } catch (JSONException e) {
-                        return;
-                    }
-                    Log.e("status buzzer =>", msg);
-                    if (msg.equals("true")) {
-                        resultAlarmTrue();
-                    } else {
-                        resultAlarmFalse();
-                    }
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener vibrationEmitter = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String msg;
-                    try {
-                        msg = data.getString("msg");
-                    } catch (JSONException e) {
-                        return;
-                    }
-                    Log.e("status vibration =>", msg);
-                    if (msg.equals("true")) {
-                        resultParkingEventTrue();
-                    } else {
-                        resultParkingEventFalse();
-                    }
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener ignitionOffEmitter = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String msg;
-                    try {
-                        msg = data.getString("msg");
-                    } catch (JSONException e) {
-                        return;
-                    }
-                    Log.e("status ignition =>", msg);
-                    if (msg.equals("true")) {
-                        resultIgnitionTrue();
-                    } else {
-                        resultIgnitionFalse();
-                    }
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener ignitionOnEmitter = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String msg;
-                    try {
-                        msg = data.getString("msg");
-                    } catch (JSONException e) {
-                        return;
-                    }
-                    Log.e("status ignition off =>", msg);
-                    if (msg.equals("true")) {
-                        resultControlIgnitionOnTrue();
-                    } else {
-                        resultControlIgnitionOnFalse();
-                    }
-                }
-            });
-        }
-    };
     private void settupDataRelay(DataResponse dataResponse) {
         Boolean relay_gps = dataResponse.getRelay().getRealtimeGps();
         Boolean relay_ignition_off = dataResponse.getRelay().getIgnitionOff();
-        Boolean relay_ignition_on  = dataResponse.getRelay().getIgnitionOn();
+        Boolean relay_ignition_on = dataResponse.getRelay().getIgnitionOn();
         Boolean relay_vibration = dataResponse.getRelay().getVibration();
         Boolean relay_buzzer = dataResponse.getRelay().getBuzzer();
 
@@ -367,34 +385,119 @@ public class RemoteActivity extends AppCompatActivity {
         btnParkingMode.setChecked(relay_vibration);
         btnAlarm.setChecked(relay_buzzer);
 
-        if(relay_buzzer){
+        if (relay_buzzer) {
             resultAlarmTrue();
-        }else{
+        } else {
             resultAlarmFalse();
         }
 
-        if(relay_ignition_on){
+        if (relay_ignition_on) {
             resultControlIgnitionOnTrue();
-        }else{
+        } else {
             resultControlIgnitionOnFalse();
         }
 
-        if(relay_ignition_off){
+        if (relay_ignition_off) {
             resultIgnitionTrue();
-        }else{
+        } else {
             resultIgnitionFalse();
         }
 
-        if(relay_vibration){
+        if (relay_vibration) {
             resultParkingEventTrue();
-        }else{
+        } else {
             resultParkingEventFalse();
         }
 
-        if(relay_gps){
+        if (relay_gps) {
             resultGpsTrue();
-        }else{
+        } else {
             resultGpsFalse();
+        }
+    }
+
+    @BindView(R.id.layout_toggle_menu)
+    RelativeLayout layout_toggle_menu;
+
+    @OnClick(R.id.status_bar)
+    public void openMenu() {
+        counter++;
+        if (counter % 2 == 0) {
+            layout_toggle_menu.setVisibility(View.VISIBLE);
+
+            layout_gps.setVisibility(View.VISIBLE);
+            layout_gps.animate().alpha(1.0f).setDuration(100)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                        }
+                    });
+
+            layout_parking.setVisibility(View.VISIBLE);
+            layout_parking.animate().alpha(1.0f).setDuration(300)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                        }
+                    });
+
+            layout_ignition.setVisibility(View.VISIBLE);
+            layout_ignition.animate().alpha(1.0f).setDuration(500)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                        }
+                    });
+
+            layout_alarm.setVisibility(View.VISIBLE);
+            layout_alarm.animate().alpha(1.0f).setDuration(700)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                        }
+                    });
+        } else {
+            layout_alarm.animate().alpha(0.0f).setDuration(100)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            layout_alarm.setVisibility(View.GONE);
+                        }
+                    });
+
+
+            layout_ignition.animate().alpha(0.0f).setDuration(300)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            layout_alarm.setVisibility(View.GONE);
+                        }
+                    });
+
+            layout_parking.animate().alpha(0.0f).setDuration(500)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            layout_parking.setVisibility(View.GONE);
+                        }
+                    });
+
+            layout_gps.animate().alpha(0.0f).setDuration(700)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            layout_gps.setVisibility(View.GONE);
+                            layout_toggle_menu.setVisibility(View.GONE);
+                        }
+                    });
         }
     }
 
@@ -463,21 +566,21 @@ public class RemoteActivity extends AppCompatActivity {
     @OnTouch(R.id.button_started)
     public boolean startingUpVehicle(View v, MotionEvent event) {
         int action = event.getAction();
-        if (action == MotionEvent.ACTION_DOWN){
+        if (action == MotionEvent.ACTION_DOWN) {
             Log.d("start button", "pushed..");
             JSONObject content1 = new JSONObject();
             try {
                 content1.put("msg", true);
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
             mSocket.emit("relay4", content1);
-        } else if (action == event.ACTION_UP){
+        } else if (action == event.ACTION_UP) {
             Log.d("start button", "not pushed..");
             JSONObject content2 = new JSONObject();
             try {
                 content2.put("msg", false);
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
             mSocket.emit("relay4", content2);
@@ -508,7 +611,7 @@ public class RemoteActivity extends AppCompatActivity {
 
     private void resultControlIgnitionOnFalse() {
         button_started.setVisibility(View.INVISIBLE);
-        btnIgnitionOn.setBackground(getResources().getDrawable(R.drawable.background_box_orange_toggle));
+        btnIgnitionOn.setBackground(getResources().getDrawable(R.drawable.background_box_orange));
         btnIgnitionOn.setText(R.string.turn_on_ignition_dissable);
     }
 
@@ -540,12 +643,18 @@ public class RemoteActivity extends AppCompatActivity {
     }
 
     private void resultGpsFalse() {
-        btnGps.setBackground(getResources().getDrawable(R.drawable.togle_off_left_top));
+        if(btnGps.getVisibility()==View.VISIBLE) {
+            btnGps.setChecked(false);
+            btnGps.setBackground(getResources().getDrawable(R.drawable.togle_off));
+        }
         textGps.setText(R.string.gps_off);
     }
 
     private void resultGpsTrue() {
-        btnGps.setBackground(getResources().getDrawable(R.drawable.togle_on_left_top));
+        if(btnGps.getVisibility()==View.VISIBLE) {
+            btnGps.setChecked(true);
+            btnGps.setBackground(getResources().getDrawable(R.drawable.togle_on));
+        }
         textGps.setText(R.string.gps_on);
     }
 
@@ -571,12 +680,18 @@ public class RemoteActivity extends AppCompatActivity {
     }
 
     private void resultParkingEventFalse() {
-        btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_off_right_top));
+        if(btnParkingMode.getVisibility()==View.VISIBLE) {
+            btnParkingMode.setChecked(false);
+            btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_off));
+        }
         textMode.setText(R.string.parkir_off);
     }
 
     private void resultParkingEventTrue() {
-        btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_on_right_top));
+        if(btnParkingMode.getVisibility()==View.VISIBLE){
+            btnParkingMode.setChecked(true);
+            btnParkingMode.setBackground(getResources().getDrawable(R.drawable.togle_on));
+        }
         textMode.setText(R.string.parkir_on);
     }
 
@@ -602,12 +717,18 @@ public class RemoteActivity extends AppCompatActivity {
     }
 
     private void resultAlarmFalse() {
-        btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_off_right_bottom));
+        if(btnAlarm.getVisibility()==View.VISIBLE) {
+            btnAlarm.setChecked(false);
+            btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_off));
+        }
         textAlarm.setText(R.string.alarm_off);
     }
 
     private void resultAlarmTrue() {
-        btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_on_right_bottom));
+        if(btnAlarm.getVisibility()==View.VISIBLE) {
+            btnAlarm.setChecked(true);
+            btnAlarm.setBackground(getResources().getDrawable(R.drawable.togle_on));
+        }
         textAlarm.setText(R.string.alarm_on);
     }
 
@@ -633,11 +754,17 @@ public class RemoteActivity extends AppCompatActivity {
     }
 
     private void resultIgnitionFalse() {
-        btnIgnitionOff.setBackground(getResources().getDrawable(R.drawable.togle_off_left_bottom));
+        if(btnIgnitionOff.getVisibility()==View.VISIBLE) {
+            btnIgnitionOff.setChecked(true);
+            btnIgnitionOff.setBackground(getResources().getDrawable(R.drawable.togle_off));
+        }
     }
 
     private void resultIgnitionTrue() {
-        btnIgnitionOff.setBackground(getResources().getDrawable(R.drawable.togle_on_left_bottom));
+        if(btnIgnitionOff.getVisibility()==View.VISIBLE) {
+            btnIgnitionOff.setChecked(true);
+            btnIgnitionOff.setBackground(getResources().getDrawable(R.drawable.togle_on));
+        }
     }
 
     @Override
@@ -660,14 +787,6 @@ public class RemoteActivity extends AppCompatActivity {
         finish();
     }
 }
-
-
-
-
-
-
-
-
 
 
 //    private void settupBottomSheet() {

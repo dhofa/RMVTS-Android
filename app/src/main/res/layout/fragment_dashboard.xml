@@ -47,7 +47,7 @@
                 android:layout_height="170dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="50dp"
-                android:background="@drawable/background_corner_circle_transparent"
+                android:background="@drawable/background_corner_circle_transparent_white"
                 custom:dv_lineWidth="8dp" />
 
             <TextView

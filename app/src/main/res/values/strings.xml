@@ -20,6 +20,8 @@
     <string name="menu_parking_off">PARKING OFF</string>
     <string name="menu_gps_on">GPS ON</string>
     <string name="menu_gps_off">GPS OFF</string>
+    <string name="state_off">OFF</string>
+    <string name="state_on">ON</string>
     <string name="header_owner">Owner</string>
     <string name="header_plat_nomor">Plat Nomor</string>
     <string name="menu_log">LOG</string>

@@ -15,7 +15,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/blue_default"
+            android:gravity="center"
+            android:background="@color/colorPrimaryApp"
             android:paddingBottom="20dp">
             <RelativeLayout
                 android:id="@+id/layout_top"
@@ -23,9 +24,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/background_box_white"
+                android:background="@drawable/background_box_white_transparent"
                 android:paddingBottom="@dimen/activity_margin">
+
+                <com.hookedonplay.decoviewlib.DecoView
+                    android:id="@+id/dynamicArcView"
+                    android:layout_width="170dp"
+                    android:layout_height="170dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="50dp"
+                    android:background="@drawable/background_corner_circle_transparent"
+                    custom:dv_lineWidth="8dp" />
 
                 <ImageView
                     android:id="@+id/logo"
@@ -44,18 +53,9 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"
                     android:format24Hour="kk:mm:ss"
-                    android:textColor="#323232"
+                    android:textColor="@color/white"
                     android:textSize="12sp"
                     android:textStyle="bold" />
-
-                <com.hookedonplay.decoviewlib.DecoView
-                    android:id="@+id/dynamicArcView"
-                    android:layout_width="170dp"
-                    android:layout_height="170dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="50dp"
-                    android:background="@drawable/background_corner_circle_transparent"
-                    custom:dv_lineWidth="8dp" />
 
                 <Button
                     android:id="@+id/button_started"
@@ -76,6 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/dynamicArcView"
                     android:layout_marginTop="24dp"
+                    android:textColor="@color/white"
                     android:text="@string/mode_parkir"
                     android:textAlignment="center"
                     android:textStyle="bold" />
@@ -86,6 +87,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/mode"
                     android:layout_marginTop="24dp"
+                    android:textColor="@color/white"
                     android:text="@string/nama_jalan"
                     android:textAlignment="center" />
 
@@ -95,6 +97,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/title_alamat"
                     android:text="@string/alamat_lengkap"
+                    android:textColor="@color/white"
                     android:textAlignment="center" />
 
                 <LinearLayout
@@ -105,7 +108,7 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginStart="20dp"
                     android:padding="15dp"
-                    android:background="@drawable/background_box_white"
+                    android:background="@drawable/background_box_white_transparent"
                     android:layout_marginTop="15dp"
                     android:orientation="horizontal"
                     android:weightSum="2">
@@ -116,17 +119,152 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Log Gps : -"
+                        android:textColor="@color/white"
                         android:textAlignment="center" />
 
                     <TextView
                         android:id="@+id/text_alarm"
                         android:layout_width="0dp"
+                        android:textColor="@color/white"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Alarm : -"
                         android:textAlignment="center" />
 
                 </LinearLayout>
+
+                <RelativeLayout
+                    android:visibility="gone"
+                    android:id="@+id/layout_toggle_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/status_bar">
+
+                    <LinearLayout
+                        android:id="@+id/layout_gps"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/background_box_white_transparent"
+                        android:layout_marginTop="10dp"
+                        android:padding="5dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="20dp"
+                        android:weightSum="4">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="3"
+                            android:layout_height="wrap_content"
+                            android:text="Settup GPS"
+                            android:textColor="@color/white"/>
+                        <ToggleButton
+                            android:id="@+id/btn_gps"
+                            android:textColor="@color/white"
+                            android:textOff="@string/state_off"
+                            android:textOn="@string/state_on"
+                            android:layout_width="0dp"
+                            android:background="@drawable/togle_on"
+                            android:textSize="14sp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_parking"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/background_box_white_transparent"
+                        android:layout_marginTop="5dp"
+                        android:padding="5dp"
+                        android:layout_below="@+id/layout_gps"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="20dp"
+                        android:weightSum="4">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="3"
+                            android:layout_height="wrap_content"
+                            android:text="Parking Mode"
+                            android:textColor="@color/white"/>
+                        <ToggleButton
+                            android:id="@+id/btn_parking_mode"
+                            android:textColor="@color/white"
+                            android:textOff="@string/state_off"
+                            android:textOn="@string/state_on"
+                            android:layout_width="0dp"
+                            android:background="@drawable/togle_on"
+                            android:textSize="14sp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_alarm"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/background_box_white_transparent"
+                        android:layout_marginTop="5dp"
+                        android:padding="5dp"
+                        android:layout_below="@+id/layout_parking"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="20dp"
+                        android:weightSum="4">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="3"
+                            android:layout_height="wrap_content"
+                            android:text="Alarm Status"
+                            android:textColor="@color/white"/>
+                        <ToggleButton
+                            android:id="@+id/btn_alarm"
+                            android:textColor="@color/white"
+                            android:textOff="@string/state_off"
+                            android:textOn="@string/state_on"
+                            android:layout_width="0dp"
+                            android:background="@drawable/togle_on"
+                            android:textSize="14sp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_ignition"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/background_box_white_transparent"
+                        android:layout_marginTop="5dp"
+                        android:padding="5dp"
+                        android:layout_below="@+id/layout_alarm"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="20dp"
+                        android:weightSum="4">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="3"
+                            android:layout_height="wrap_content"
+                            android:text="Force Turn Off Vehicle"
+                            android:textColor="@color/white"/>
+                        <ToggleButton
+                            android:id="@+id/btn_ignition_off"
+                            android:textColor="@color/white"
+                            android:textOff="@string/state_off"
+                            android:textOn="@string/state_on"
+                            android:layout_width="0dp"
+                            android:background="@drawable/togle_on"
+                            android:textSize="14sp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+
             </RelativeLayout>
 
             <ToggleButton
@@ -145,103 +283,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:id="@+id/toggle_top"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:baselineAligned="false"
-                android:layout_marginTop="20dp"
-                android:layout_below="@+id/button_ignition_on"
-                android:paddingEnd="@dimen/activity_margin"
-                android:paddingStart="@dimen/activity_margin"
-                android:layout_gravity="center_vertical"
-                android:weightSum="2">
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:layout_height="wrap_content">
-                    <ToggleButton
-                        android:id="@+id/btn_gps"
-                        android:textColor="@color/white"
-                        android:textOff="@string/menu_gps_off"
-                        android:textOn="@string/menu_gps_on"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_width="match_parent"
-                        android:background="@drawable/togle_on_left_top"
-                        android:textSize="14sp"
-                        android:layout_height="80dp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:layout_height="wrap_content">
-
-                    <ToggleButton
-                        android:id="@+id/btn_parking_mode"
-                        android:textColor="@color/white"
-                        android:textOff="@string/menu_parking_off"
-                        android:textOn="@string/menu_parking_on"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_width="match_parent"
-                        android:background="@drawable/togle_on_right_top"
-                        android:textSize="14sp"
-                        android:layout_height="80dp" />
-                </RelativeLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:orientation="horizontal"
-                android:layout_below="@+id/toggle_top"
-                android:layout_gravity="center_vertical"
-                android:weightSum="2">
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
-                    <ToggleButton
-                        android:id="@+id/btn_ignition_off"
-                        android:textColor="@color/white"
-                        android:textOff="@string/menu_ignition_on"
-                        android:textOn="@string/menu_ignition_off"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_width="match_parent"
-                        android:background="@drawable/togle_on_left_bottom"
-                        android:textSize="14sp"
-                        android:layout_height="80dp" />
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
-
-                    <ToggleButton
-                        android:id="@+id/btn_alarm"
-                        android:textColor="@color/white"
-                        android:textOff="@string/menu_alarm_off"
-                        android:textOn="@string/menu_alarm_on"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_width="match_parent"
-                        android:background="@drawable/togle_on_right_bottom"
-                        android:textSize="14sp"
-                        android:layout_height="80dp" />
-
-                </RelativeLayout>
-            </LinearLayout>
         </RelativeLayout>
     </ScrollView>
 
